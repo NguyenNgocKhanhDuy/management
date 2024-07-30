@@ -3,6 +3,7 @@
 $green: #3c715e;
 $yellow: #ffe193;
 $background: #fbfbf6;
+$lightGrey: #d3d3d0;
 
 
 * {
@@ -17,3 +18,11 @@ html, body {
     height: 100%;
 }
 
+@mixin border($top, $right, $bottom, $left) {
+    border-top: $top+px;
+    border-right: $right+px;
+    border-bottom: $bottom+px;
+    border-left: $left+px;
+    border-style: solid;
+    border-color: $lightGrey;
+}

@@ -9,7 +9,7 @@ function Management() {
 				<h2 className="title">obantor</h2>
 				<div className="item isItemSelected">
 					<i className="fa-solid fa-list-check"></i>
-					<span>Task</span>
+					<span>Tasks</span>
 					<span className="amount">12</span>
 				</div>
 				<div className="item">
@@ -42,7 +42,28 @@ function Management() {
 						<i className="fa-regular fa-circle-question"></i>
 					</div>
 				</div>
-				<div className="content">Content</div>
+				<div className="content">
+					<div className="content-top">
+						<div className="date">
+							<span className="month">April</span>
+							<span className="today">Today is Saturday, April 6th, 2024</span>
+						</div>
+						<div className="project">
+							<span>Project Name</span>
+						</div>
+						<div className="more">
+							<div className="filter box">
+								<i className="fa-solid fa-filter"></i>
+								<span>Filters</span>
+							</div>
+							<div className="new box">
+								<i className="fa-solid fa-plus"></i>
+								<span>Create task</span>
+							</div>
+						</div>
+					</div>
+					<div className="content-main">Main</div>
+				</div>
 			</div>
 		</div>
 	);

@@ -1,14 +1,19 @@
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 
-$green: "#3c715e";
-$yellow: "#ffe193";
-$background: "#fbfbf6";
+$green: #3c715e;
+$yellow: #ffe193;
+$background: #fbfbf6;
 
 
 * {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    color: black;
     text-decoration: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
 }
 

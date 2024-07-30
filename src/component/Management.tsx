@@ -62,7 +62,152 @@ function Management() {
 							</div>
 						</div>
 					</div>
-					<div className="content-main">Main</div>
+					<div className="content-main">
+						<div className="todo-list-section section">
+							<h2 className="name">To do list</h2>
+							<i className="fa-solid fa-plus add"></i>
+							<div className="list">
+								<div className="item">
+									<div className="item-category">Data</div>
+									<div className="item-content">
+										<h2 className="item-content-title">Data Presentation Of IMV</h2>
+										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
+									</div>
+									<div className="item-progress">
+										<div className="status">
+											<h2 className="title">Progress</h2>
+											<span className="percentage">50%</span>
+										</div>
+										<div className="line">
+											<span className="full"></span>
+											<span className="capacity"></span>
+										</div>
+									</div>
+									<div className="item-bottom">
+										<img src={blackImg} alt="avatar" className="avatar" />
+										<div className="more">
+											<div className="date">
+												<i className="fa-solid fa-flag"></i>
+												<span className="dateTime">April 6</span>
+											</div>
+											<div className="comment">
+												<i className="fa-solid fa-message"></i>
+												<span className="amount">2</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="progress-section section">
+							<h2 className="name">Progress</h2>
+							<i className="fa-solid fa-plus add"></i>
+							<div className="list">
+								<div className="item">
+									<div className="item-category">Data</div>
+									<div className="item-content">
+										<h2 className="item-content-title">Data Presentation Of IMV</h2>
+										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
+									</div>
+									<div className="item-progress">
+										<div className="status">
+											<h2 className="title">Progress</h2>
+											<span className="percentage">50%</span>
+										</div>
+										<div className="line">
+											<span className="full"></span>
+											<span className="capacity"></span>
+										</div>
+									</div>
+									<div className="item-bottom">
+										<img src={blackImg} alt="avatar" className="avatar" />
+										<div className="more">
+											<div className="date">
+												<i className="fa-solid fa-flag"></i>
+												<span className="dateTime">April 6</span>
+											</div>
+											<div className="comment">
+												<i className="fa-solid fa-message"></i>
+												<span className="amount">2</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="review-section section">
+							<h2 className="name">In Review</h2>
+							<i className="fa-solid fa-plus add"></i>
+							<div className="list">
+								<div className="item">
+									<div className="item-category">Data</div>
+									<div className="item-content">
+										<h2 className="item-content-title">Data Presentation Of IMV</h2>
+										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
+									</div>
+									<div className="item-progress">
+										<div className="status">
+											<h2 className="title">Progress</h2>
+											<span className="percentage">50%</span>
+										</div>
+										<div className="line">
+											<span className="full"></span>
+											<span className="capacity"></span>
+										</div>
+									</div>
+									<div className="item-bottom">
+										<img src={blackImg} alt="avatar" className="avatar" />
+										<div className="more">
+											<div className="date">
+												<i className="fa-solid fa-flag"></i>
+												<span className="dateTime">April 6</span>
+											</div>
+											<div className="comment">
+												<i className="fa-solid fa-message"></i>
+												<span className="amount">2</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="done-section section">
+							<h2 className="name">Done</h2>
+							<i className="fa-solid fa-plus add"></i>
+							<div className="list">
+								<div className="item">
+									<div className="item-category">Data</div>
+									<div className="item-content">
+										<h2 className="item-content-title">Data Presentation Of IMV</h2>
+										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
+									</div>
+									<div className="item-progress">
+										<div className="status">
+											<h2 className="title">Progress</h2>
+											<span className="percentage">50%</span>
+										</div>
+										<div className="line">
+											<span className="full"></span>
+											<span className="capacity"></span>
+										</div>
+									</div>
+									<div className="item-bottom">
+										<img src={blackImg} alt="avatar" className="avatar" />
+										<div className="more">
+											<div className="date">
+												<i className="fa-solid fa-flag"></i>
+												<span className="dateTime">April 6</span>
+											</div>
+											<div className="comment">
+												<i className="fa-solid fa-message"></i>
+												<span className="amount">2</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

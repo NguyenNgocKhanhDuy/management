@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/style/management.scss";
 import blackImg from "../assets/img/black.jpg";
 import ModalCreateTask from "./ModalCreateTask";
 
 function Management() {
+
+	const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
+
+	const handleOpenCloseModalCreate = (isOpen: boolean) => {
+		setIsOpenModalCreate(isOpen);
+	}
+
+
 	return (
 		<div className="container">
 			<div className="sidebar">
@@ -57,7 +65,7 @@ function Management() {
 								<i className="fa-solid fa-filter"></i>
 								<span>Filters</span>
 							</div>
-							<div className="new box">
+							<div className="new box" onClick={() => handleOpenCloseModalCreate(true)}>
 								<i className="fa-solid fa-plus"></i>
 								<span>Create task</span>
 							</div>
@@ -66,7 +74,7 @@ function Management() {
 					<div className="content-main">
 						<div className="todo-list-section section">
 							<h2 className="name">To do list</h2>
-							<i className="fa-solid fa-plus add"></i>
+							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
 							<div className="list">
 								<div className="item">
 									<div className="item-category">Data</div>
@@ -102,7 +110,7 @@ function Management() {
 						</div>
 						<div className="progress-section section">
 							<h2 className="name">Progress</h2>
-							<i className="fa-solid fa-plus add"></i>
+							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
 							<div className="list">
 								<div className="item">
 									<div className="item-category">Data</div>
@@ -138,7 +146,7 @@ function Management() {
 						</div>
 						<div className="review-section section">
 							<h2 className="name">In Review</h2>
-							<i className="fa-solid fa-plus add"></i>
+							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
 							<div className="list">
 								<div className="item">
 									<div className="item-category">Data</div>
@@ -174,7 +182,7 @@ function Management() {
 						</div>
 						<div className="done-section section">
 							<h2 className="name">Done</h2>
-							<i className="fa-solid fa-plus add"></i>
+							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
 							<div className="list">
 								<div className="item">
 									<div className="item-category">Data</div>
@@ -211,7 +219,7 @@ function Management() {
 					</div>
 				</div>
 			</div>
-			<ModalCreateTask/>
+			{isOpenModalCreate ? <ModalCreateTask handleClose={() => handleOpenCloseModalCreate(false)} /> : ""}
 		</div>
 	);
 }

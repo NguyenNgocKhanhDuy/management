@@ -11,6 +11,25 @@ function Management() {
 		setIsOpenModalCreate(isOpen);
 	}
 
+	const handleGetDate = () => {
+		const today = new Date();
+		const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		const dayOfWeek = daysOfWeek[today.getDay()];
+		const month = months[today.getMonth()];
+		const day = today.getDate();
+		const year = today.getFullYear();
+		const suffix = day === 1 || day === 21 || day === 31 ? "st" : day === 2 || day === 22 ? "nd" : day === 3 || day === 23 ? "rd" : "th";
+
+		return `Today is ${dayOfWeek}, ${month} ${day}${suffix}, ${year}`;
+	}
+
+	const handleGetMonth = () => {
+		const today = new Date();
+		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		const month = months[today.getMonth()];
+		return month;
+	}
 
 	return (
 		<div className="container">
@@ -54,8 +73,8 @@ function Management() {
 				<div className="content">
 					<div className="content-top">
 						<div className="date">
-							<span className="month">April</span>
-							<span className="today">Today is Saturday, April 6th, 2024</span>
+							<span className="month">{handleGetMonth()}</span>
+							<span className="today">{handleGetDate()}</span>
 						</div>
 						<div className="project">
 							<span>Project Name</span>

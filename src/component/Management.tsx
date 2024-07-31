@@ -1,6 +1,7 @@
 import React from "react";
 import "../assets/style/management.scss";
 import blackImg from "../assets/img/black.jpg";
+import ModalCreateTask from "./ModalCreateTask";
 
 function Management() {
 	return (
@@ -210,6 +211,7 @@ function Management() {
 					</div>
 				</div>
 			</div>
+			<ModalCreateTask/>
 		</div>
 	);
 }

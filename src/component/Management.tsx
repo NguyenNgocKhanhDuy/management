@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../assets/style/management.scss";
 import blackImg from "../assets/img/black.jpg";
 import ModalCreateTask from "./ModalCreateTask";
+import ModalEditTask from "./ModalEditTask";
 
 function Management() {
 
@@ -239,6 +240,7 @@ function Management() {
 				</div>
 			</div>
 			{isOpenModalCreate ? <ModalCreateTask handleClose={() => handleOpenCloseModalCreate(false)} /> : ""}
+			<ModalEditTask/>
 		</div>
 	);
 }

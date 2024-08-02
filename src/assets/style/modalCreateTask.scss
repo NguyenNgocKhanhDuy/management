@@ -136,15 +136,15 @@
             padding: 8px 16px;
             background-color: $green;
             color: white;
-            text-transform: uppercase;
+            text-transform: uppercase;  
             border-radius: 4px;
-            @include border(1, 1, 1, 1);
             transition: all 0.25s linear;
             cursor: pointer;
 
             &:hover {
                 background-color: $yellow;
                 color: $green;
+                @include border(1, 1, 1, 1);
             }
         }
     }

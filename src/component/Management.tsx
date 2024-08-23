@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import "../assets/style/management.scss";
 import blackImg from "../assets/img/black.jpg";
 import ModalCreateTask from "./ModalCreateTask";
 import ModalEditTask from "./ModalEditTask";
+import TaskStatus from "./TaskStatus";
+import "../assets/style/management.scss";
 
 function Management() {
-
 	const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
 
 	const handleOpenCloseModalCreate = (isOpen: boolean) => {
 		setIsOpenModalCreate(isOpen);
-	}
+	};
 
 	const handleGetDate = () => {
 		const today = new Date();
@@ -23,14 +23,14 @@ function Management() {
 		const suffix = day === 1 || day === 21 || day === 31 ? "st" : day === 2 || day === 22 ? "nd" : day === 3 || day === 23 ? "rd" : "th";
 
 		return `Today is ${dayOfWeek}, ${month} ${day}${suffix}, ${year}`;
-	}
+	};
 
 	const handleGetMonth = () => {
 		const today = new Date();
 		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		const month = months[today.getMonth()];
 		return month;
-	}
+	};
 
 	return (
 		<div className="container">
@@ -92,155 +92,13 @@ function Management() {
 						</div>
 					</div>
 					<div className="content-main">
-						<div className="todo-list-section section">
-							<h2 className="name">To do list</h2>
-							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
-							<div className="list">
-								<div className="item">
-									<div className="item-category">Data</div>
-									<div className="item-content">
-										<h2 className="item-content-title">Data Presentation Of IMV</h2>
-										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
-									</div>
-									<div className="item-progress">
-										<div className="status">
-											<h2 className="title">Progress</h2>
-											<span className="percentage">50%</span>
-										</div>
-										<div className="line">
-											<span className="full"></span>
-											<span className="capacity"></span>
-										</div>
-									</div>
-									<div className="item-bottom">
-										<img src={blackImg} alt="avatar" className="avatar" />
-										<div className="more">
-											<div className="date">
-												<i className="fa-solid fa-flag"></i>
-												<span className="dateTime">April 6</span>
-											</div>
-											<div className="comment">
-												<i className="fa-solid fa-message"></i>
-												<span className="amount">2</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="progress-section section">
-							<h2 className="name">Progress</h2>
-							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
-							<div className="list">
-								<div className="item">
-									<div className="item-category">Data</div>
-									<div className="item-content">
-										<h2 className="item-content-title">Data Presentation Of IMV</h2>
-										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
-									</div>
-									<div className="item-progress">
-										<div className="status">
-											<h2 className="title">Progress</h2>
-											<span className="percentage">50%</span>
-										</div>
-										<div className="line">
-											<span className="full"></span>
-											<span className="capacity"></span>
-										</div>
-									</div>
-									<div className="item-bottom">
-										<img src={blackImg} alt="avatar" className="avatar" />
-										<div className="more">
-											<div className="date">
-												<i className="fa-solid fa-flag"></i>
-												<span className="dateTime">April 6</span>
-											</div>
-											<div className="comment">
-												<i className="fa-solid fa-message"></i>
-												<span className="amount">2</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="review-section section">
-							<h2 className="name">In Review</h2>
-							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
-							<div className="list">
-								<div className="item">
-									<div className="item-category">Data</div>
-									<div className="item-content">
-										<h2 className="item-content-title">Data Presentation Of IMV</h2>
-										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
-									</div>
-									<div className="item-progress">
-										<div className="status">
-											<h2 className="title">Progress</h2>
-											<span className="percentage">50%</span>
-										</div>
-										<div className="line">
-											<span className="full"></span>
-											<span className="capacity"></span>
-										</div>
-									</div>
-									<div className="item-bottom">
-										<img src={blackImg} alt="avatar" className="avatar" />
-										<div className="more">
-											<div className="date">
-												<i className="fa-solid fa-flag"></i>
-												<span className="dateTime">April 6</span>
-											</div>
-											<div className="comment">
-												<i className="fa-solid fa-message"></i>
-												<span className="amount">2</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="done-section section">
-							<h2 className="name">Done</h2>
-							<i className="fa-solid fa-plus add" onClick={() => handleOpenCloseModalCreate(true)}></i>
-							<div className="list">
-								<div className="item">
-									<div className="item-category">Data</div>
-									<div className="item-content">
-										<h2 className="item-content-title">Data Presentation Of IMV</h2>
-										<p className="item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
-									</div>
-									<div className="item-progress">
-										<div className="status">
-											<h2 className="title">Progress</h2>
-											<span className="percentage">50%</span>
-										</div>
-										<div className="line">
-											<span className="full"></span>
-											<span className="capacity"></span>
-										</div>
-									</div>
-									<div className="item-bottom">
-										<img src={blackImg} alt="avatar" className="avatar" />
-										<div className="more">
-											<div className="date">
-												<i className="fa-solid fa-flag"></i>
-												<span className="dateTime">April 6</span>
-											</div>
-											<div className="comment">
-												<i className="fa-solid fa-message"></i>
-												<span className="amount">2</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<TaskStatus statusName="To Do List" statusClassName="todo-list" />
+						<TaskStatus statusName="Pending" statusClassName="pending" />
+						<TaskStatus statusName="Done" statusClassName="done" />
 					</div>
 				</div>
 			</div>
 			{isOpenModalCreate ? <ModalCreateTask handleClose={() => handleOpenCloseModalCreate(false)} /> : ""}
-			<ModalEditTask/>
 		</div>
 	);
 }

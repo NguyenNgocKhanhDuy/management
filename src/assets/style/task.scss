@@ -14,14 +14,26 @@
 		background-color: $yellow;
 	}
 
-	&-category {
-		width: fit-content;
-		margin-bottom: 12px;
-		background-color: cornflowerblue;
-		color: white;
+	// &-category {
+	// 	width: fit-content;
+	// 	margin-bottom: 12px;
+	// 	background-color: cornflowerblue;
+	// 	color: white;
+	// 	font-size: 14px;
+	// 	padding: 4px 16px;
+	// 	border-radius: 12px;
+	// }
+
+	&-date {
+		display: flex;
+		align-items: center;
+		color: gray;
 		font-size: 14px;
-		padding: 4px 16px;
-		border-radius: 12px;
+		margin-bottom: 12px;
+
+		i {
+			margin-right: 8px;
+		}
 	}
 
 	&-content {

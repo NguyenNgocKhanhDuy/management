@@ -9,14 +9,16 @@ function Task(props: any) {
 		type: "TASK",
 		item: { id: props.id },
 	}));
-	
 
 	return (
 		<div className="task-item" ref={drag}>
-			<div className="task-item-category">Data</div>
+			<div className="task-item-date">
+				<i className="fa-solid fa-calendar-days"></i>
+				<span className="dateTime">April 6</span>
+			</div>
 			<div className="task-item-content">
 				<h2 className="task-item-content-title">Data Presentation Of IMV {props.title}</h2>
-				<p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
+				{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
 			</div>
 			<div className="task-item-progress">
 				<div className="status">
@@ -35,10 +37,10 @@ function Task(props: any) {
 						<i className="fa-solid fa-flag"></i>
 						<span className="dateTime">April 6</span>
 					</div>
-					<div className="comment">
+					{/* <div className="comment">
 						<i className="fa-solid fa-message"></i>
 						<span className="amount">2</span>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

@@ -10,7 +10,7 @@
 
 	.name {
 		font-size: 16px;
-		margin: 0 auto;
+		margin: 0 auto 16px;
 		width: fit-content;
 		position: relative;
 
@@ -18,9 +18,9 @@
 			content: "";
 			position: absolute;
 			top: 50%;
-			left: 0;
-			width: 6px;
-			height: 6px;
+			left: 4px;
+			width: 10px;
+			height: 10px;
 			transform: translate(-200%, -50%);
 			border-radius: 50%;
 		}

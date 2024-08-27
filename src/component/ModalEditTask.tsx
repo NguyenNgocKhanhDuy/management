@@ -103,33 +103,6 @@ function ModalEditTask() {
 							<span>{handleChangeDateFormat("2024-08-02")}</span>
 						</div>
 					</div>
-					<div className="category">
-						<div className="category-text" ref={categoryTestRef}>
-							Category...
-						</div>
-						<button
-							className="category-btn"
-							onClick={() => {
-								setIsEditCategory(!isEditCategory);
-							}}
-						>
-							{isEditCategory ? "Save Change" : "Edit Tag"}
-						</button>
-					</div>
-
-					{isEditCategory ? (
-						<div className="category-edit">
-							<input type="text" className="category-edit-name" placeholder="Category..." ref={inputCategoryRef} onInput={handleChangeCategoryTest} />
-							<select className="category-edit-color" onChange={handleSelectColor} ref={selectColorRef}>
-								<option className="category-edit-color-item" value="cornflowerblue"></option>
-								<option className="category-edit-color-item" value="plum"></option>
-								<option className="category-edit-color-item" value="orange"></option>
-								<option className="category-edit-color-item" value="pink"></option>
-							</select>
-						</div>
-					) : (
-						""
-					)}
 					<div className="desc">
 						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores numquam quibusdam dolor possimus quam et doloremque dolorum reiciendis nam tempora temporibus eveniet eaque ex natus sed repudiandae inventore, quaerat dolores. Lorem ipsum, dolor sit amet consectetur adipisicing
 						elit. Dolores facilis, aspernatur quae architecto laudantium repellendus corporis perferendis quam quasi ipsum unde laborum qui libero vero quaerat quis cumque beatae saepe!

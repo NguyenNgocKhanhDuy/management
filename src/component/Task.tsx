@@ -1,10 +1,17 @@
 import React, { useState } from "react";
+import { useDrag } from "react-dnd";
 import blackImg from "../assets/img/black.jpg";
 import "../assets/style/task.scss";
 
 function Task(props: any) {
+
+	const [, drag] = useDrag(() => ({
+		type: "TASK",
+		item: { id: props.id },
+	}));
+
 	return (
-		<div className="task-item">
+		<div className="task-item" ref={drag}>
 			<div className="task-item-category">Data</div>
 			<div className="task-item-content">
 				<h2 className="task-item-content-title">Data Presentation Of IMV</h2>

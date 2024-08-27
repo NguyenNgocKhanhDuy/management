@@ -27,9 +27,6 @@ function ModalCreateTask(props : any) {
 	}
 
 
-	
-
-
 
     return (
 			<div className="modal">

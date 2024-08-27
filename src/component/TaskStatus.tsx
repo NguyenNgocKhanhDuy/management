@@ -10,6 +10,7 @@ function TaskStatus(props: any) {
 			accept: "TASK",
 			drop: (item: any) => props.moveTask(item.id, props.statusName),
 	}));
+	
 
 	return (
 		<div className={props.statusClassName + "-section section"} ref={drop}>

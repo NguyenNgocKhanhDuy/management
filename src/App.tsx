@@ -1,15 +1,14 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import Management from "./component/Management";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import Home from "./component/Home";
 
 function App() {
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<div className="App">
-				<Management />
+				<Home/>
 			</div>
 		</DndProvider>
 	);

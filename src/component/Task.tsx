@@ -9,12 +9,13 @@ function Task(props: any) {
 		type: "TASK",
 		item: { id: props.id },
 	}));
+	
 
 	return (
 		<div className="task-item" ref={drag}>
 			<div className="task-item-category">Data</div>
 			<div className="task-item-content">
-				<h2 className="task-item-content-title">Data Presentation Of IMV</h2>
+				<h2 className="task-item-content-title">Data Presentation Of IMV {props.title}</h2>
 				<p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p>
 			</div>
 			<div className="task-item-progress">

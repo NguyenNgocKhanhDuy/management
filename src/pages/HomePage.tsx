@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import blackImg from "../assets/img/black.jpg";
 import ModalCreateTask from "../components/ModalCreateTask";
-import "../assets/style/home.scss";
+import "../assets/style/homePage.scss";
 import Management from "../components/Management";
 import Project from "../components/Project";
 
-function Home() {
+function HomePage() {
 	const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
 	const [isManagement, setIsManagement] = useState(false);
 	const [isProject, setIsProject] = useState(true);
@@ -107,4 +107,4 @@ function Home() {
 	);
 }
 
-export default Home;
+export default HomePage;

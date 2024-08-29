@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import blackImg from "../assets/img/black.jpg";
-import ModalCreateTask from "./ModalCreateTask";
+import ModalCreateTask from "../components/ModalCreateTask";
 import "../assets/style/home.scss";
-import Management from "./Management";
-import Project from "./Project";
+import Management from "../components/Management";
+import Project from "../components/Project";
 
 function Home() {
 	const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);

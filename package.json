@@ -24,6 +24,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
     "react-textarea-autosize": "^8.5.3",
     "sass": "^1.77.8",

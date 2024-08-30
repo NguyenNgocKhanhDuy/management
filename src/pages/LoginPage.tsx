@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/style/loginPage.scss";
 
 function LoginPage() {
+	const [errorMessage, setErrorMessage] = useState("");
+
+	const handleCheckEmail = (email: string) => {
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return regex.test(email);
+	};
+
+	const handleCheckPassword = (password: string) => {
+		return password.length >= 8;
+	};
+
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
-		console.log("Form submitted");
+		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
+		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
+		if (!handleCheckEmail(emailInput.value)) {
+			setErrorMessage("Invalid email format");
+		}
+
+		if (!handleCheckPassword(passInput.value)) {
+			setErrorMessage("Password must be at least 8 characters");
+		}
 	};
 
 	return (
@@ -14,14 +33,14 @@ function LoginPage() {
 			<form className="login__form" onSubmit={handleSubmit}>
 				<div className="login__holder">
 					<i className="fa-solid fa-envelope"></i>
-					<input type="email" name="" id="" className="login__input login__input-email" placeholder="Email" />
+					<input type="email" name="email" className="login__input login__input-email" placeholder="Email" onClick={() => setErrorMessage("")} />
 				</div>
 				<div className="login__holder">
 					<i className="fa-solid fa-lock"></i>
-					<input type="password" name="" id="" className="login__input login__input-password" placeholder="Password" />
+					<input type="password" name="password" className="login__input login__input-password" placeholder="Password" onClick={() => setErrorMessage("")} />
 				</div>
-				<div className="login__error login__error--hidden">
-					<p className="login__error-message">Email has already been used</p>
+				<div className={(errorMessage == "" ? "login__error--hidden" : "") + " login__error"}>
+					<p className="login__error-message">{errorMessage}</p>
 				</div>
 				<button className="login__btn">Login</button>
 			</form>

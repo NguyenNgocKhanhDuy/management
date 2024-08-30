@@ -9,7 +9,7 @@ html {
 	align-items: center;
 }
 
-.login {
+.register {
 	width: 400px;
 	padding: 32px;
 	border-radius: 4px;
@@ -80,8 +80,8 @@ html {
 		padding: 12px 24px;
 		margin-top: 16px;
 		border-radius: 4px;
-		transition: all 0.25s linear;
 		@include border(1, 1, 1, 1);
+		transition: all 0.25s linear;
 		cursor: pointer;
 
 		&:hover {
@@ -90,20 +90,7 @@ html {
 		}
 	}
 
-	&__forgot-password {
-		margin-bottom: 12px;
-		font-size: 14px;
-		color: $green;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.25s linear;
-
-		&:hover {
-			color: $lightGreen;
-		}
-	}
-
-	&__sign-up {
+	&__login {
 		font-size: 14px;
 
 		&-link {

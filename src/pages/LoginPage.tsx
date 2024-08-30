@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../assets/style/loginPage.scss";
+import { Link } from "react-router-dom";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
@@ -46,7 +47,10 @@ function LoginPage() {
 			</form>
 			<p className="login__forgot-password">Forgot Password?</p>
 			<p className="login__sign-up">
-				Don't have an account? <span className="login__sign-up-link">Sign Up</span>
+				Don't have an account?{" "}
+				<Link to={"/register"} className="login__sign-up-link">
+					Sign Up
+				</Link>
 			</p>
 		</div>
 	);

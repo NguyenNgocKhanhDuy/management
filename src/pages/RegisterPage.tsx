@@ -18,7 +18,7 @@ function RegisterPage() {
 		return password.length >= 8;
 	};
 
-	const handleSubmit = (event: any) => {
+	const handleSubmit = async (event: any) => {
 		event.preventDefault();
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
 		const usernameInput = (event.target as HTMLFormElement).elements.namedItem("username") as HTMLInputElement;
@@ -34,6 +34,33 @@ function RegisterPage() {
 
 		if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
+		}
+
+		const requestBody = {
+			email: emailInput.value,
+			username: usernameInput.value,
+			password: passInput.value,
+		};
+
+		try {
+			const response = await fetch("http://localhost:8080/users", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(requestBody),
+			});
+
+			if (!response.ok) {
+				setErrorMessage("Network response was not ok");
+			}
+
+			const data = await response.json();
+			console.log("Success:", data);
+			setErrorMessage("");
+		} catch (error) {
+			console.error("Error:", error);
+			setErrorMessage("Failed to register. Please try again later.");
 		}
 	};
 

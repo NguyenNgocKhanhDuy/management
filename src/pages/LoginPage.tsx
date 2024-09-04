@@ -1,29 +1,53 @@
 import React, { useState } from "react";
 import "../assets/style/loginPage.scss";
 import { Link } from "react-router-dom";
+import ModalForgotPassword from "../components/ModalForgotPassword";
+import { handleCheckEmail, handleCheckPassword } from "../utils/validation";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
+	const [showModalForgotPass, setShowModalForgotPass] = useState(false);
 
-	const handleCheckEmail = (email: string) => {
-		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return regex.test(email);
-	};
-
-	const handleCheckPassword = (password: string) => {
-		return password.length >= 8;
-	};
-
-	const handleSubmit = (event: any) => {
+	const handleSubmit = async (event: any) => {
 		event.preventDefault();
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
 		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
 		if (!handleCheckEmail(emailInput.value)) {
 			setErrorMessage("Invalid email format");
-		}
-
-		if (!handleCheckPassword(passInput.value)) {
+		} else if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
+		} else {
+			const requestBody = {
+				email: emailInput.value,
+				password: passInput.value,
+			};
+
+			try {
+				const response = await fetch("http://localhost:8080/auth/login", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(requestBody),
+				});
+
+				if (!response.ok) {
+					setErrorMessage("Network response was not ok");
+				}
+
+				const data = await response.json();
+
+				if (!data.status) {
+					console.log("ERROR", data);
+					setErrorMessage("Failed from api");
+				}
+
+				console.log("Success:", data);
+				setErrorMessage("");
+			} catch (error) {
+				console.error("Error:", error);
+				setErrorMessage("Failed to login. Please try again later.");
+			}
 		}
 	};
 
@@ -45,13 +69,17 @@ function LoginPage() {
 				</div>
 				<button className="login__btn">Login</button>
 			</form>
-			<p className="login__forgot-password">Forgot Password?</p>
+			<p className="login__forgot-password" onClick={() => setShowModalForgotPass(!showModalForgotPass)}>
+				Forgot Password?
+			</p>
 			<p className="login__sign-up">
 				Don't have an account?{" "}
 				<Link to={"/register"} className="login__sign-up-link">
 					Sign Up
 				</Link>
 			</p>
+
+			{showModalForgotPass ? <ModalForgotPassword close={() => setShowModalForgotPass(!showModalForgotPass)} /> : ""}
 		</div>
 	);
 }

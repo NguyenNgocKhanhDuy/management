@@ -12,6 +12,7 @@ function VerifyEmailPage() {
 	const isForgotPassword = useSelector((state: RootState) => state.user.isForgotPass);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const [sendCodeText, setSendCodeText] = useState("Resend Code");
 
 	const handleInput = (e: any, index: number) => {
 		const input = e.target as HTMLInputElement;
@@ -63,6 +64,35 @@ function VerifyEmailPage() {
 		}
 	};
 
+	const handleResendCode = async () => {
+		setSendCodeText("Resending...");
+		const requestBody = {
+			emai: email,
+		};
+
+		const response = await fetch("http://localhost:8080/users/sendCodeToUser", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(requestBody),
+		});
+
+		if (!response.ok) {
+			console.error("Network response was not ok");
+			return;
+		}
+
+		const data = await response.json();
+
+		if (!data.status) {
+			console.log("ERROR", data);
+			setErrorMessage("Failed from api");
+		} else {
+			setSendCodeText("Resend Code");
+		}
+	};
+
 	return (
 		<div className="verify">
 			<h2 className="verify__title">Verify Email</h2>
@@ -81,7 +111,10 @@ function VerifyEmailPage() {
 				Verify
 			</button>
 			<div className="verify__resend">
-				Don't receive code? <span className="verify__resend-link">Resend Code</span>
+				Don't receive code?{" "}
+				<span className="verify__resend-link" onClick={handleResendCode}>
+					{sendCodeText}
+				</span>
 			</div>
 		</div>
 	);

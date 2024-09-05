@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import "../assets/style/register.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { saveEmail } from "../store/userSlice";
 
 function RegisterPage() {
 	const [errorMessage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const handleCheckEmail = (email: string) => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,41 +30,43 @@ function RegisterPage() {
 
 		if (!handleCheckEmail(emailInput.value)) {
 			setErrorMessage("Invalid email format");
-		}
-
-		if (!handleCheckUsername(usernameInput.value)) {
+		} else if (!handleCheckUsername(usernameInput.value)) {
 			setErrorMessage("Please enter your username");
-		}
-
-		if (!handleCheckPassword(passInput.value)) {
+		} else if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
-		}
+		} else {
+			const requestBody = {
+				email: emailInput.value,
+				username: usernameInput.value,
+				password: passInput.value,
+			};
 
-		const requestBody = {
-			email: emailInput.value,
-			username: usernameInput.value,
-			password: passInput.value,
-		};
+			try {
+				const response = await fetch("http://localhost:8080/users", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(requestBody),
+				});
 
-		try {
-			const response = await fetch("http://localhost:8080/users", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(requestBody),
-			});
+				if (!response.ok) {
+					setErrorMessage("Network response was not ok");
+				}
 
-			if (!response.ok) {
-				setErrorMessage("Network response was not ok");
+				const data = await response.json();
+				console.log("Success:", data);
+				if (!data.status) {
+					console.log("ERROR", data);
+					setErrorMessage("Failed from api");
+				} else {
+					dispatch(saveEmail(emailInput.value));
+					navigate("/verifyEmail");
+				}
+			} catch (error) {
+				console.error("Error:", error);
+				setErrorMessage("Failed to register. Please try again later.");
 			}
-
-			const data = await response.json();
-			console.log("Success:", data);
-			setErrorMessage("");
-		} catch (error) {
-			console.error("Error:", error);
-			setErrorMessage("Failed to register. Please try again later.");
 		}
 	};
 

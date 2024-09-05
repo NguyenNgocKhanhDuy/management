@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
 import "../assets/style/verifyEmailPage.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 function VerifyEmailPage() {
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+	const email = useSelector((state: RootState) => state.user.email);
 
 	const handleInput = (e: any, index: number) => {
 		const input = e.target as HTMLInputElement;

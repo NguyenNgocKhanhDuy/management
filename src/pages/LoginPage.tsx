@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "../assets/style/loginPage.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ModalForgotPassword from "../components/ModalForgotPassword";
 import { handleCheckEmail, handleCheckPassword } from "../utils/validation";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showModalForgotPass, setShowModalForgotPass] = useState(false);
+	const navigate = useNavigate();
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
@@ -40,10 +41,9 @@ function LoginPage() {
 				if (!data.status) {
 					console.log("ERROR", data);
 					setErrorMessage("Failed from api");
+				} else {
+					navigate("/home");
 				}
-
-				console.log("Success:", data);
-				setErrorMessage("");
 			} catch (error) {
 				console.error("Error:", error);
 				setErrorMessage("Failed to login. Please try again later.");

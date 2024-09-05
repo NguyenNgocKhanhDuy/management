@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import "../assets/style/modalForgotPassword.scss";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleCheckEmail } from "../utils/validation";
+import { useDispatch } from "react-redux";
+import { saveEmail } from "../store/userSlice";
 
 function ModalForgotPassword(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
@@ -34,9 +38,10 @@ function ModalForgotPassword(props: any) {
 				if (!data.status) {
 					console.log("ERROR", data);
 					setErrorMessage("Failed from api");
+				} else {
+					dispatch(saveEmail(emailInput.value));
+					navigate("/verifyEmail");
 				}
-
-				navigate("/verifyEmail");
 			} catch (error) {
 				console.error("Error:", error);
 				setErrorMessage("Failed to get password. Please try again later.");

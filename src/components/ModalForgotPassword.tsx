@@ -3,7 +3,7 @@ import "../assets/style/modalForgotPassword.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { handleCheckEmail } from "../utils/validation";
 import { useDispatch } from "react-redux";
-import { saveEmail } from "../store/userSlice";
+import { saveEmail, setForgotPassword } from "../store/userSlice";
 
 function ModalForgotPassword(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
@@ -40,6 +40,7 @@ function ModalForgotPassword(props: any) {
 					setErrorMessage("Failed from api");
 				} else {
 					dispatch(saveEmail(emailInput.value));
+					dispatch(setForgotPassword(true));
 					navigate("/verifyEmail");
 				}
 			} catch (error) {
@@ -71,5 +72,3 @@ function ModalForgotPassword(props: any) {
 		</div>
 	);
 }
-
-export default ModalForgotPassword;

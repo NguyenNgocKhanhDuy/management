@@ -1,11 +1,17 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import "../assets/style/verifyEmailPage.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { useNavigate } from "react-router-dom";
+import { setForgotPassword } from "../store/userSlice";
 
 function VerifyEmailPage() {
+	const [errorMessage, setErrorMessage] = useState("");
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 	const email = useSelector((state: RootState) => state.user.email);
+	const isForgotPassword = useSelector((state: RootState) => state.user.isForgotPass);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleInput = (e: any, index: number) => {
 		const input = e.target as HTMLInputElement;
@@ -15,6 +21,45 @@ function VerifyEmailPage() {
 
 		if (input.value.length == 1 && index < inputRefs.current.length) {
 			inputRefs.current[index + 1]?.focus();
+		}
+	};
+
+	const handleVerify = async () => {
+		const verificationCode = inputRefs.current.map((ref) => ref?.value).join("");
+		const requestBody = {
+			emai: email,
+			code: verificationCode,
+		};
+
+		const response = await fetch("http://localhost:8080/users/sendCodeToUser", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(requestBody),
+		});
+
+		if (!response.ok) {
+			console.error("Network response was not ok");
+			return;
+		}
+
+		const data = await response.json();
+
+		if (!data.status) {
+			console.log("ERROR", data);
+			setErrorMessage("Failed from api");
+		} else {
+			if (data.valid) {
+				if (isForgotPassword) {
+					dispatch(setForgotPassword(false));
+					navigate("/newPass");
+				} else {
+					navigate("/login");
+				}
+			} else {
+				setErrorMessage("Incorrect verify code");
+			}
 		}
 	};
 
@@ -29,7 +74,12 @@ function VerifyEmailPage() {
 						<input type="number" key={index} maxLength={1} className="verify__input" onInput={(e) => handleInput(e, index)} ref={(el) => (inputRefs.current[index] = el)} />
 					))}
 			</div>
-			<button className="verify__btn">Verify</button>
+			<div className={(errorMessage == "" ? "verify__error--hidden" : "") + " verify__error"}>
+				<p className="verify__error-message">{errorMessage}</p>
+			</div>
+			<button className="verify__btn" onClick={handleVerify}>
+				Verify
+			</button>
 			<div className="verify__resend">
 				Don't receive code? <span className="verify__resend-link">Resend Code</span>
 			</div>

@@ -39,14 +39,12 @@ function LoginPage() {
 				const data = await response.json();
 
 				if (!data.status) {
-					console.log("ERROR", data);
-					setErrorMessage("Failed from api");
+					setErrorMessage(data.message);
 				} else {
 					navigate("/home");
 				}
 			} catch (error) {
 				console.error("Error:", error);
-				setErrorMessage("Failed to login. Please try again later.");
 			}
 		}
 	};

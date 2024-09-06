@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../assets/style/verifyEmailPage.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -14,6 +14,10 @@ function VerifyEmailPage() {
 	const navigate = useNavigate();
 	const [sendCodeText, setSendCodeText] = useState("Resend Code");
 
+	useEffect(() => {
+		inputRefs.current[0]?.focus();
+	}, [])
+
 	const handleInput = (e: any, index: number) => {
 		const input = e.target as HTMLInputElement;
 		if (input.value.length > 1) {
@@ -28,11 +32,11 @@ function VerifyEmailPage() {
 	const handleVerify = async () => {
 		const verificationCode = inputRefs.current.map((ref) => ref?.value).join("");
 		const requestBody = {
-			emai: email,
+			email: email,
 			code: verificationCode,
 		};
 
-		const response = await fetch("http://localhost:8080/users/sendCodeToUser", {
+		const response = await fetch("http://localhost:8080/users/verifyCode", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -49,9 +53,9 @@ function VerifyEmailPage() {
 
 		if (!data.status) {
 			console.log("ERROR", data);
-			setErrorMessage("Failed from api");
+			setErrorMessage(data.message);
 		} else {
-			if (data.valid) {
+			if (data.result.valid) {
 				if (isForgotPassword) {
 					dispatch(setForgotPassword(false));
 					navigate("/newPass");
@@ -96,12 +100,12 @@ function VerifyEmailPage() {
 	return (
 		<div className="verify">
 			<h2 className="verify__title">Verify Email</h2>
-			<p className="verify__subtitle">We've sent code to your email. Please check and input code to verity your email</p>
+			<p className="verify__subtitle">We've sent code to {email}. Please check and input code to verity your email</p>
 			<div className="verify__form">
-				{Array(5)
+				{Array(6)
 					.fill(0)
 					.map((_, index) => (
-						<input type="number" key={index} maxLength={1} className="verify__input" onInput={(e) => handleInput(e, index)} ref={(el) => (inputRefs.current[index] = el)} />
+						<input type="number" key={index} maxLength={1} className="verify__input" onInput={(e) => handleInput(e, index)} ref={(el) => (inputRefs.current[index] = el)} onClick={() => setErrorMessage("")} />
 					))}
 			</div>
 			<div className={(errorMessage == "" ? "verify__error--hidden" : "") + " verify__error"}>

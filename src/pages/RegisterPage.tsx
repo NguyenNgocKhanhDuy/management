@@ -42,7 +42,7 @@ function RegisterPage() {
 			};
 
 			try {
-				const response = await fetch("http://localhost:8080/users", {
+				const response = await fetch("http://localhost:8080/users/register", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -58,7 +58,7 @@ function RegisterPage() {
 				console.log("Success:", data);
 				if (!data.status) {
 					console.log("ERROR", data);
-					setErrorMessage("Failed from api");
+					setErrorMessage(data.message);
 				} else {
 					dispatch(saveEmail(emailInput.value));
 					navigate("/verifyEmail");

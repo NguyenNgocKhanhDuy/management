@@ -37,7 +37,7 @@ function ModalForgotPassword(props: any) {
 
 				if (!data.status) {
 					console.log("ERROR", data);
-					setErrorMessage("Failed from api");
+					setErrorMessage(data.message);
 				} else {
 					dispatch(saveEmail(emailInput.value));
 					dispatch(setForgotPassword(true));
@@ -72,3 +72,5 @@ function ModalForgotPassword(props: any) {
 		</div>
 	);
 }
+
+export default ModalForgotPassword;

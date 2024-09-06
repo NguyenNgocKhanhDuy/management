@@ -1,24 +1,61 @@
 import React, { useState } from "react";
 import "../assets/style/newPass.scss";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { setForgotPassword } from "../store/userSlice";
 
 function NewPass() {
 	const [errorMessage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
+	const email = useSelector((state: RootState) => state.user.email);
+	const dispatch = useDispatch();
 
 	const handleCheckPassword = (password: string) => {
 		return password.length >= 8;
 	};
 
-	const handleSubmit = (event: any) => {
+	const handleSubmit = async (event: any) => {
 		event.preventDefault();
 		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
 		const passConfirmInput = (event.target as HTMLFormElement).elements.namedItem("password-confirm") as HTMLInputElement;
 
 		if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
-		}
-
-		if (passInput.value != passConfirmInput.value) {
+		} else if (passInput.value != passConfirmInput.value) {
 			setErrorMessage("Incorrect password and confirmation password");
+		} else {
+			const requestBody = {
+				email: email,
+				password: passInput.value,
+			};
+
+			try {
+				const response = await fetch("http://localhost:8080/users/updatePassword", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(requestBody),
+				});
+
+				if (!response.ok) {
+					setErrorMessage("Network response was not ok");
+				}
+
+				const data = await response.json();
+
+				if (!data.status) {
+					console.log("ERROR", data);
+					setErrorMessage(data.message);
+				} else {
+					dispatch(setForgotPassword(false));
+					navigate("/login");
+				}
+			} catch (error) {
+				console.error("Error:", error);
+				setErrorMessage("Failed to get password. Please try again later.");
+			}
 		}
 	};
 

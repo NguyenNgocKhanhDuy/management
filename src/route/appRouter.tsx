@@ -1,12 +1,12 @@
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
-import ErrorPage from "../pages/ErrorPage";
-import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
-import VerifyEmailPage from "../pages/VerifyEmailPage";
-import NewPass from "../pages/NewPass";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import HomePage from "../pages/HomePage/HomePage";
+import LoginPage from "../pages/LoginPage/LoginPage";
+import RegisterPage from "../pages/RegisterPage/RegisterPage";
+import VerifyEmailPage from "../pages/VerifyEmailPage/VerifyEmailPage";
+import NewPass from "../pages/NewPass/NewPass";
 
 export const router = createBrowserRouter([
 	{
@@ -24,15 +24,15 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "/register",
-				element: <RegisterPage/>,
+				element: <RegisterPage />,
 			},
 			{
 				path: "/verifyEmail",
-				element: <VerifyEmailPage/>,
+				element: <VerifyEmailPage />,
 			},
 			{
 				path: "/newPass",
-				element: <NewPass/>,
+				element: <NewPass />,
 			},
 			{
 				path: "/home",

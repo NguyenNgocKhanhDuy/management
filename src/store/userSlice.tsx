@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface UserState {
 	email: string;
 	isForgotPass: boolean;
+	token: string;
 }
 
 const initialState: UserState = {
 	email: "",
 	isForgotPass: false,
+	token: "",
 };
 
 export const userSlice = createSlice({
@@ -20,8 +22,11 @@ export const userSlice = createSlice({
 		setForgotPassword: (state, action: PayloadAction<boolean>) => {
 			state.isForgotPass = action.payload;
 		},
+		saveToken: (state, action: PayloadAction<string>) => {
+			state.token = action.payload;
+		},
 	},
 });
 
-export const { saveEmail, setForgotPassword } = userSlice.actions;
+export const { saveEmail, setForgotPassword, saveToken } = userSlice.actions;
 export default userSlice.reducer;

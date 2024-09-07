@@ -7,24 +7,32 @@ $lightGrey: #d3d3d0;
 $whiteGreen: #ebf6f1;
 $lightGreen: #45bc83;
 
-
 * {
-    font-family: Arial, Helvetica, sans-serif;
-    text-decoration: none;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
-html, body {
-    height: 100%;
+body,
+html {
+	height: 100%;
+}
+
+.body-center {
+	height: 100%;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 @mixin border($top, $right, $bottom, $left) {
-    border-top: $top+px;
-    border-right: $right+px;
-    border-bottom: $bottom+px;
-    border-left: $left+px;
-    border-style: solid;
-    border-color: $lightGrey;
+	border-top: $top + px;
+	border-right: $right + px;
+	border-bottom: $bottom + px;
+	border-left: $left + px;
+	border-style: solid;
+	border-color: $lightGrey;
 }

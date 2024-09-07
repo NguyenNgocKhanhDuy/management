@@ -1,0 +1,14 @@
+.project {
+	height: calc(100% - 56px);
+	overflow: hidden;
+
+	&__list {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: wrap;
+		height: 100%;
+		padding-bottom: 30px;
+		overflow: auto;
+	}
+}

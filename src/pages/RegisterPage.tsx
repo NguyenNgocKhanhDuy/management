@@ -3,11 +3,13 @@ import "../assets/style/register.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveEmail } from "../store/userSlice";
+import Loading from "../components/Loading";
 
 function RegisterPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
 
 	const handleCheckEmail = (email: string) => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,16 +26,20 @@ function RegisterPage() {
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setLoading(true);
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
 		const usernameInput = (event.target as HTMLFormElement).elements.namedItem("username") as HTMLInputElement;
 		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
 
 		if (!handleCheckEmail(emailInput.value)) {
 			setErrorMessage("Invalid email format");
+			setLoading(false);
 		} else if (!handleCheckUsername(usernameInput.value)) {
 			setErrorMessage("Please enter your username");
+			setLoading(false);
 		} else if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
+			setLoading(false);
 		} else {
 			const requestBody = {
 				email: emailInput.value,
@@ -52,6 +58,7 @@ function RegisterPage() {
 
 				if (!response.ok) {
 					setErrorMessage("Network response was not ok");
+					setLoading(false);
 				}
 
 				const data = await response.json();
@@ -59,6 +66,7 @@ function RegisterPage() {
 				if (!data.status) {
 					console.log("ERROR", data);
 					setErrorMessage(data.message);
+					setLoading(false);
 				} else {
 					dispatch(saveEmail(emailInput.value));
 					navigate("/verifyEmail");
@@ -66,6 +74,7 @@ function RegisterPage() {
 			} catch (error) {
 				console.error("Error:", error);
 				setErrorMessage("Failed to register. Please try again later.");
+				setLoading(false);
 			}
 		}
 	};
@@ -98,6 +107,7 @@ function RegisterPage() {
 					Log in
 				</Link>
 			</p>
+			{loading ? <Loading loading={loading} /> : ""}
 		</div>
 	);
 }

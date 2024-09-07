@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setForgotPassword } from "../store/userSlice";
+import Loading from "../components/Loading";
 
 function NewPass() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 	const email = useSelector((state: RootState) => state.user.email);
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
 
 	const handleCheckPassword = (password: string) => {
 		return password.length >= 8;
@@ -17,13 +19,16 @@ function NewPass() {
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setLoading(true);
 		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
 		const passConfirmInput = (event.target as HTMLFormElement).elements.namedItem("password-confirm") as HTMLInputElement;
 
 		if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
+			setLoading(false);
 		} else if (passInput.value != passConfirmInput.value) {
 			setErrorMessage("Incorrect password and confirmation password");
+			setLoading(false);
 		} else {
 			const requestBody = {
 				email: email,
@@ -41,6 +46,7 @@ function NewPass() {
 
 				if (!response.ok) {
 					setErrorMessage("Network response was not ok");
+					setLoading(false);
 				}
 
 				const data = await response.json();
@@ -48,6 +54,7 @@ function NewPass() {
 				if (!data.status) {
 					console.log("ERROR", data);
 					setErrorMessage(data.message);
+					setLoading(false);
 				} else {
 					dispatch(setForgotPassword(false));
 					navigate("/login");
@@ -55,6 +62,7 @@ function NewPass() {
 			} catch (error) {
 				console.error("Error:", error);
 				setErrorMessage("Failed to get password. Please try again later.");
+				setLoading(false);
 			}
 		}
 	};
@@ -77,6 +85,7 @@ function NewPass() {
 				</div>
 				<button className="newPass__btn">Save</button>
 			</form>
+			{loading ? <Loading loading={loading} /> : ""}
 		</div>
 	);
 }

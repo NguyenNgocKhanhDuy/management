@@ -4,17 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { handleCheckEmail } from "../utils/validation";
 import { useDispatch } from "react-redux";
 import { saveEmail, setForgotPassword } from "../store/userSlice";
+import Loading from "./Loading";
 
 function ModalForgotPassword(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setLoading(true);
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
 		if (!handleCheckEmail(emailInput.value)) {
 			setErrorMessage("Invalid email format");
+			setLoading(false);
 		} else {
 			const requestBody = {
 				email: emailInput.value,
@@ -31,6 +35,7 @@ function ModalForgotPassword(props: any) {
 
 				if (!response.ok) {
 					setErrorMessage("Network response was not ok");
+					setLoading(false);
 				}
 
 				const data = await response.json();
@@ -38,6 +43,7 @@ function ModalForgotPassword(props: any) {
 				if (!data.status) {
 					console.log("ERROR", data);
 					setErrorMessage(data.message);
+					setLoading(false);
 				} else {
 					dispatch(saveEmail(emailInput.value));
 					dispatch(setForgotPassword(true));
@@ -46,6 +52,7 @@ function ModalForgotPassword(props: any) {
 			} catch (error) {
 				console.error("Error:", error);
 				setErrorMessage("Failed to get password. Please try again later.");
+				setLoading(false);
 			}
 		}
 	};
@@ -69,6 +76,7 @@ function ModalForgotPassword(props: any) {
 					</Link>
 				</p>
 			</div>
+			{loading ? <Loading loading={loading} /> : ""}
 		</div>
 	);
 }

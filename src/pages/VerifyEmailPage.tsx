@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useNavigate } from "react-router-dom";
 import { setForgotPassword } from "../store/userSlice";
+import Loading from "../components/Loading";
 
 function VerifyEmailPage() {
 	const [errorMessage, setErrorMessage] = useState("");
@@ -12,11 +13,11 @@ function VerifyEmailPage() {
 	const isForgotPassword = useSelector((state: RootState) => state.user.isForgotPass);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const [sendCodeText, setSendCodeText] = useState("Resend Code");
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		inputRefs.current[0]?.focus();
-	}, [])
+	}, []);
 
 	const handleInput = (e: any, index: number) => {
 		const input = e.target as HTMLInputElement;
@@ -30,6 +31,7 @@ function VerifyEmailPage() {
 	};
 
 	const handleVerify = async () => {
+		setLoading(true);
 		const verificationCode = inputRefs.current.map((ref) => ref?.value).join("");
 		const requestBody = {
 			email: email,
@@ -54,6 +56,7 @@ function VerifyEmailPage() {
 		if (!data.status) {
 			console.log("ERROR", data);
 			setErrorMessage(data.message);
+			setLoading(false);
 		} else {
 			if (data.result.valid) {
 				if (isForgotPassword) {
@@ -64,14 +67,19 @@ function VerifyEmailPage() {
 				}
 			} else {
 				setErrorMessage("Incorrect verify code");
+				setLoading(false);
 			}
 		}
 	};
 
 	const handleResendCode = async () => {
-		setSendCodeText("Resending...");
+		inputRefs.current.map((ref) => {
+			if (ref) ref.value = "";
+		});
+		setErrorMessage("");
+		setLoading(true);
 		const requestBody = {
-			emai: email,
+			email: email,
 		};
 
 		const response = await fetch("http://localhost:8080/users/sendCodeToUser", {
@@ -83,17 +91,18 @@ function VerifyEmailPage() {
 		});
 
 		if (!response.ok) {
-			console.error("Network response was not ok");
+			setErrorMessage("Network response was not ok");
+			setLoading(false);
 			return;
 		}
 
 		const data = await response.json();
 
 		if (!data.status) {
-			console.log("ERROR", data);
-			setErrorMessage("Failed from api");
+			setErrorMessage(data.message);
+			setLoading(false);
 		} else {
-			setSendCodeText("Resend Code");
+			setLoading(false);
 		}
 	};
 
@@ -117,9 +126,10 @@ function VerifyEmailPage() {
 			<div className="verify__resend">
 				Don't receive code?{" "}
 				<span className="verify__resend-link" onClick={handleResendCode}>
-					{sendCodeText}
+					Resend Code
 				</span>
 			</div>
+			{loading ? <Loading loading={loading} /> : ""}
 		</div>
 	);
 }

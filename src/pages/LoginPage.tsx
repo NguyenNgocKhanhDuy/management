@@ -3,20 +3,25 @@ import "../assets/style/loginPage.scss";
 import { Link, useNavigate } from "react-router-dom";
 import ModalForgotPassword from "../components/ModalForgotPassword";
 import { handleCheckEmail, handleCheckPassword } from "../utils/validation";
+import Loading from "../components/Loading";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showModalForgotPass, setShowModalForgotPass] = useState(false);
 	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setLoading(true);
 		const emailInput = (event.target as HTMLFormElement).elements.namedItem("email") as HTMLInputElement;
 		const passInput = (event.target as HTMLFormElement).elements.namedItem("password") as HTMLInputElement;
 		if (!handleCheckEmail(emailInput.value)) {
 			setErrorMessage("Invalid email format");
+			setLoading(false);
 		} else if (!handleCheckPassword(passInput.value)) {
 			setErrorMessage("Password must be at least 8 characters");
+			setLoading(false);
 		} else {
 			const requestBody = {
 				email: emailInput.value,
@@ -34,17 +39,21 @@ function LoginPage() {
 
 				if (!response.ok) {
 					setErrorMessage("Network response was not ok");
+					setLoading(false);
 				}
 
 				const data = await response.json();
 
 				if (!data.status) {
 					setErrorMessage(data.message);
+					setLoading(false);
 				} else {
 					navigate("/home");
 				}
 			} catch (error) {
 				console.error("Error:", error);
+				setErrorMessage("Failed to login. Please try again later.");
+				setLoading(false);
 			}
 		}
 	};
@@ -78,6 +87,7 @@ function LoginPage() {
 			</p>
 
 			{showModalForgotPass ? <ModalForgotPassword close={() => setShowModalForgotPass(!showModalForgotPass)} /> : ""}
+			{loading ? <Loading loading={loading} /> : ""}
 		</div>
 	);
 }

@@ -1,13 +1,11 @@
 @import "../../assets/style/base.scss";
 
-// body,
-// html {
-// 	height: 100%;
-// 	margin: 0;
-// 	display: flex;
-// 	justify-content: center;
-// 	align-items: center;
-// }
+.c-wrap {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
 
 .register {
 	width: 400px;
@@ -45,7 +43,7 @@
 		@include border(1, 1, 1, 1);
 		transition: all 0.25s linear;
 
-		&:has(.login__input):hover {
+		&:focus-within {
 			border-color: $green;
 			color: $green;
 		}

@@ -1,13 +1,11 @@
 @import "../../assets/style/base.scss";
 
-// body,
-// html {
-// 	height: 100%;
-// 	margin: 0;
-// 	display: flex;
-// 	justify-content: center;
-// 	align-items: center;
-// }
+.c-wrap {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
 
 .verify {
 	width: 400px;

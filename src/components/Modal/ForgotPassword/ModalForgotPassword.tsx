@@ -5,6 +5,7 @@ import { handleCheckEmail } from "~/utils/validation";
 import { useDispatch } from "react-redux";
 import { saveEmail, setForgotPassword } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
+import axios from "axios";
 
 function ModalForgotPassword(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
@@ -20,38 +21,35 @@ function ModalForgotPassword(props: any) {
 			setErrorMessage("Invalid email format");
 			setLoading(false);
 		} else {
-			const requestBody = {
-				email: emailInput.value,
-			};
-
 			try {
-				const response = await fetch("http://localhost:8080/users/sendCodeToUser", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
+				const response = await axios.post(
+					`${process.env.REACT_APP_API_BASE_URL}/users/sendCodeToUser`,
+					{
+						email: emailInput.value,
 					},
-					body: JSON.stringify(requestBody),
-				});
 
-				if (!response.ok) {
-					setErrorMessage("Network response was not ok");
-					setLoading(false);
-				}
+					{
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-				const data = await response.json();
-
-				if (!data.status) {
-					console.log("ERROR", data);
-					setErrorMessage(data.message);
-					setLoading(false);
-				} else {
+				const data = response.data;
+				if (data.status) {
 					dispatch(saveEmail(emailInput.value));
 					dispatch(setForgotPassword(true));
 					navigate("/verifyEmail");
 				}
-			} catch (error) {
-				console.error("Error:", error);
-				setErrorMessage("Failed to get password. Please try again later.");
+			} catch (error: any) {
+				if (error.response) {
+					console.error("Error:", error.response.data.message);
+					setErrorMessage(error.response.data.message);
+				} else if (error.request) {
+					setErrorMessage("Failed to connect to server.");
+				} else {
+					setErrorMessage("An unexpected error occurred: " + error.message);
+				}
 				setLoading(false);
 			}
 		}
@@ -63,7 +61,10 @@ function ModalForgotPassword(props: any) {
 				<i className="fa-solid fa-xmark modal__close" onClick={() => props.close()}></i>
 				<h2 className="modal__title">Forgot Password</h2>
 				<form className="modal__form" onSubmit={handleSubmit}>
-					<input type="email" name="email" placeholder="Enter your email" className="modal__input" onClick={() => setErrorMessage("")} />
+					<div className="modal__holder">
+						<i className="fa-solid fa-envelope"></i>
+						<input type="email" name="email" placeholder="Enter your email" className="modal__input" onClick={() => setErrorMessage("")} />
+					</div>
 					<div className={(errorMessage == "" ? "modal__error--hidden" : "") + " modal__error"}>
 						<p className="modal__error-message">{errorMessage}</p>
 					</div>

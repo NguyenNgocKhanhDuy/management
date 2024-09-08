@@ -6,6 +6,7 @@ import Management from "~/components/Management/Management";
 import Project from "~/components/Project/Project";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
+import axios from "axios";
 
 interface User {
 	email: string;
@@ -18,6 +19,10 @@ function HomePage() {
 	const [isProject, setIsProject] = useState(true);
 	const token = useSelector((state: RootState) => state.user.token);
 	const [user, setUser] = useState<User>();
+
+	useEffect(() => {
+		handleGetUser();
+	}, []);
 
 	const handleOpenCloseModalCreate = (isOpen: boolean) => {
 		setIsOpenModalCreate(isOpen);
@@ -55,33 +60,31 @@ function HomePage() {
 
 	const handleGetUser = async () => {
 		try {
-			const response = await fetch("http://localhost:8080/users/user", {
-				method: "GET",
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/user`, {
 				headers: {
-					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
 				},
 			});
 
-			if (!response.ok) {
-				console.log("Network response was not ok");
-			}
-
-			const data = await response.json();
-
-			if (!data.status) {
-				console.log(data.message);
-			} else {
+			const data = response.data;
+			if (data.status) {
 				setUser(data.result);
 			}
-		} catch (error) {
-			console.log("ERROR: ", error);
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				// setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				// setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				// setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			// setLoading(false);
 		}
 	};
-
-	useEffect(() => {
-		handleGetUser();
-	}, []);
 
 	return (
 		<div className="container">

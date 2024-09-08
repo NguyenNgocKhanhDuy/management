@@ -6,6 +6,7 @@ import { handleCheckEmail, handleCheckPassword } from "~/utils/validation";
 import Loading from "~/components/Loading/Loading";
 import { useDispatch } from "react-redux";
 import { saveToken } from "~/store/userSlice";
+import axios from "axios";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
@@ -13,14 +14,6 @@ function LoginPage() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		document.body.classList.add("body-center");
-
-		return () => {
-			document.body.classList.remove("body-center");
-		};
-	}, []);
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
@@ -34,44 +27,43 @@ function LoginPage() {
 			setErrorMessage("Password must be at least 8 characters");
 			setLoading(false);
 		} else {
-			const requestBody = {
-				email: emailInput.value,
-				password: passInput.value,
-			};
-
 			try {
-				const response = await fetch("http://localhost:8080/auth/login", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
+				const response = await axios.post(
+					`${process.env.REACT_APP_API_BASE_URL}/auth/login`,
+
+					{
+						email: emailInput.value,
+						password: passInput.value,
 					},
-					body: JSON.stringify(requestBody),
-				});
 
-				if (!response.ok) {
-					setErrorMessage("Network response was not ok");
-					setLoading(false);
-				}
+					{
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-				const data = await response.json();
-
-				if (!data.status) {
-					setErrorMessage(data.message);
-					setLoading(false);
-				} else {
+				const data = response.data;
+				if (data.status) {
 					dispatch(saveToken(data.result.token));
 					navigate("/home");
 				}
-			} catch (error) {
-				console.error("Error:", error);
-				setErrorMessage("Failed to login. Please try again later.");
+			} catch (error: any) {
+				if (error.response) {
+					console.error("Error:", error.response.data.message);
+					setErrorMessage(error.response.data.message);
+				} else if (error.request) {
+					setErrorMessage("Failed to connect to server.");
+				} else {
+					setErrorMessage("An unexpected error occurred: " + error.message);
+				}
 				setLoading(false);
 			}
 		}
 	};
 
 	return (
-		<div className="wrap">
+		<div className="c-wrap">
 			<div className="login">
 				<h2 className="login__title">Welcome back!</h2>
 				<p className="login__subtitle">We're glad to see you again!</p>

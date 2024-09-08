@@ -4,20 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveEmail } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
+import axios from "axios";
 
 function RegisterPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		document.body.classList.add("body-center");
-
-		return () => {
-			document.body.classList.remove("body-center");
-		};
-	}, []);
 
 	const handleCheckEmail = (email: string) => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,73 +42,72 @@ function RegisterPage() {
 			setErrorMessage("Password must be at least 8 characters");
 			setLoading(false);
 		} else {
-			const requestBody = {
-				email: emailInput.value,
-				username: usernameInput.value,
-				password: passInput.value,
-			};
-
 			try {
-				const response = await fetch("http://localhost:8080/users/register", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
+				const response = await axios.post(
+					`${process.env.REACT_APP_API_BASE_URL}/users/register`,
+					{
+						email: emailInput.value,
+						username: usernameInput.value,
+						password: passInput.value,
 					},
-					body: JSON.stringify(requestBody),
-				});
+					{
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-				if (!response.ok) {
-					setErrorMessage("Network response was not ok");
-					setLoading(false);
-				}
+				const data = response.data;
 
-				const data = await response.json();
-				console.log("Success:", data);
-				if (!data.status) {
-					console.log("ERROR", data);
-					setErrorMessage(data.message);
-					setLoading(false);
-				} else {
+				if (data.status) {
 					dispatch(saveEmail(emailInput.value));
 					navigate("/verifyEmail");
 				}
-			} catch (error) {
-				console.error("Error:", error);
-				setErrorMessage("Failed to register. Please try again later.");
+			} catch (error: any) {
+				if (error.response) {
+					console.error("Error:", error.response.data.message);
+					setErrorMessage(error.response.data.message);
+				} else if (error.request) {
+					setErrorMessage("Failed to connect to server.");
+				} else {
+					setErrorMessage("An unexpected error occurred: " + error.message);
+				}
 				setLoading(false);
 			}
 		}
 	};
 
 	return (
-		<div className="register">
-			<h2 className="register__title">Create Your Account</h2>
-			<p className="register__subtitle">Join us and start your journey today!</p>
-			<form className="register__form" onSubmit={handleSubmit}>
-				<div className="register__holder">
-					<i className="fa-solid fa-envelope"></i>
-					<input type="email" name="email" className="register__input register__input-email" placeholder="Email" onClick={() => setErrorMessage("")} />
-				</div>
-				<div className="register__holder">
-					<i className="fa-solid fa-user"></i>
-					<input type="text" name="username" className="register__input register__input-username" placeholder="Username" onClick={() => setErrorMessage("")} />
-				</div>
-				<div className="register__holder">
-					<i className="fa-solid fa-lock"></i>
-					<input type="password" name="password" className="register__input register__input-password" placeholder="Password" onClick={() => setErrorMessage("")} />
-				</div>
-				<div className={(errorMessage == "" ? "register__error--hidden" : "") + " register__error"}>
-					<p className="register__error-message">{errorMessage}</p>
-				</div>
-				<button className="register__btn">register</button>
-			</form>
-			<p className="register__login">
-				Already have an account?{" "}
-				<Link to={"/login"} className="register__login-link">
-					Log in
-				</Link>
-			</p>
-			{loading ? <Loading loading={loading} /> : ""}
+		<div className="c-wrap">
+			<div className="register">
+				<h2 className="register__title">Create Your Account</h2>
+				<p className="register__subtitle">Join us and start your journey today!</p>
+				<form className="register__form" onSubmit={handleSubmit}>
+					<div className="register__holder">
+						<i className="fa-solid fa-envelope"></i>
+						<input type="email" name="email" className="register__input register__input-email" placeholder="Email" onClick={() => setErrorMessage("")} />
+					</div>
+					<div className="register__holder">
+						<i className="fa-solid fa-user"></i>
+						<input type="text" name="username" className="register__input register__input-username" placeholder="Username" onClick={() => setErrorMessage("")} />
+					</div>
+					<div className="register__holder">
+						<i className="fa-solid fa-lock"></i>
+						<input type="password" name="password" className="register__input register__input-password" placeholder="Password" onClick={() => setErrorMessage("")} />
+					</div>
+					<div className={(errorMessage == "" ? "register__error--hidden" : "") + " register__error"}>
+						<p className="register__error-message">{errorMessage}</p>
+					</div>
+					<button className="register__btn">register</button>
+				</form>
+				<p className="register__login">
+					Already have an account?{" "}
+					<Link to={"/login"} className="register__login-link">
+						Log in
+					</Link>
+				</p>
+				{loading ? <Loading loading={loading} /> : ""}
+			</div>
 		</div>
 	);
 }

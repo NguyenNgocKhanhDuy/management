@@ -1,5 +1,12 @@
 @import "../../assets/style/base.scss";
 
+.c-wrap {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
 .login {
 	width: 400px;
 	padding: 32px;
@@ -36,7 +43,7 @@
 		@include border(1, 1, 1, 1);
 		transition: all 0.25s linear;
 
-		&:has(.login__input):hover {
+		&:focus-within {
 			border-color: $green;
 			color: $green;
 		}

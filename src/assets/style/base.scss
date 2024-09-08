@@ -20,14 +20,6 @@ html {
 	height: 100%;
 }
 
-.body-center {
-	height: 100%;
-	margin: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
 @mixin border($top, $right, $bottom, $left) {
 	border-top: $top + px;
 	border-right: $right + px;

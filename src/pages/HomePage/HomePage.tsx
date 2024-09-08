@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import blackImg from "~/assets/img/black.jpg";
 import ModalCreateTask from "~/components/Modal/CreateTask/ModalCreateTask";
-import "~/assets/style/homePage.scss";
+import "./homePage.scss";
 import Management from "~/components/Management/Management";
 import Project from "~/components/Project/Project";
 import { useSelector } from "react-redux";

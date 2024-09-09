@@ -7,6 +7,9 @@ import Project from "~/components/Project/Project";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import axios from "axios";
+import ModalError from "~/components/Modal/Error/ModalError";
+import Loading from "~/components/Loading/Loading";
+import {formatDateFull, formatMonth } from "~/utils/date";
 
 interface User {
 	email: string;
@@ -19,6 +22,9 @@ function HomePage() {
 	const [isProject, setIsProject] = useState(true);
 	const token = useSelector((state: RootState) => state.user.token);
 	const [user, setUser] = useState<User>();
+	const [showError, setShowError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		handleGetUser();
@@ -38,26 +44,6 @@ function HomePage() {
 		setIsManagement(false);
 	};
 
-	const handleGetDate = () => {
-		const today = new Date();
-		const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		const dayOfWeek = daysOfWeek[today.getDay()];
-		const month = months[today.getMonth()];
-		const day = today.getDate();
-		const year = today.getFullYear();
-		const suffix = day === 1 || day === 21 || day === 31 ? "st" : day === 2 || day === 22 ? "nd" : day === 3 || day === 23 ? "rd" : "th";
-
-		return `Today is ${dayOfWeek}, ${month} ${day}${suffix}, ${year}`;
-	};
-
-	const handleGetMonth = () => {
-		const today = new Date();
-		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		const month = months[today.getMonth()];
-		return month;
-	};
-
 	const handleGetUser = async () => {
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/user`, {
@@ -70,19 +56,23 @@ function HomePage() {
 			const data = response.data;
 			if (data.status) {
 				setUser(data.result);
+				setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
 				console.error("Error:", error.response.data.message);
-				// setErrorMessage(error.response.data.message);
+				setErrorMessage(error.response.data.message);
+				setShowError(true);
 			} else if (error.request) {
 				console.error("Error:", error.request);
-				// setErrorMessage("Failed to connect to server.");
+				setErrorMessage("Failed to connect to server.");
+				setShowError(true);
 			} else {
 				console.error("Error:", error.message);
-				// setErrorMessage("An unexpected error occurred: " + error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+				setShowError(true);
 			}
-			// setLoading(false);
+			setLoading(false);
 		}
 	};
 
@@ -124,27 +114,34 @@ function HomePage() {
 				<div className="content">
 					<div className="content-top">
 						<div className="date">
-							<span className="month">{handleGetMonth()}</span>
-							<span className="today">{handleGetDate()}</span>
+							<span className="today">{formatDateFull(new Date())}</span>
+							<span className="month">{formatMonth(new Date())}</span>
 						</div>
-						<div className="project">
-							<span>Project Name</span>
-						</div>
+						{isManagement ? (
+							<div className="project">
+								<span>Project Name</span>
+							</div>
+						) : (
+							""
+						)}
+
 						<div className="more">
-							<div className="filter box">
+							{/* <div className="filter box">
 								<i className="fa-solid fa-filter"></i>
 								<span>Filters</span>
-							</div>
+							</div> */}
 							<div className="new box" onClick={() => handleOpenCloseModalCreate(true)}>
 								<i className="fa-solid fa-plus"></i>
-								<span>Create task</span>
+								<span>{isManagement ? "Create task" : "New Project"}</span>
 							</div>
 						</div>
 					</div>
-					{isManagement ? <Management /> : isProject ? <Project /> : <div>No</div>}
+					{isManagement ? <Management /> : isProject ? <Project token={token} setErrorMessage={(message: string) => setErrorMessage(message)} setShowError={(isShow: boolean) => setShowError(isShow)} setLoading={(isLoading: boolean) => setLoading(isLoading)} /> : <div>No</div>}
 				</div>
 			</div>
+			{loading ? <Loading loading={loading} /> : ""}
 			{isOpenModalCreate ? <ModalCreateTask handleClose={() => handleOpenCloseModalCreate(false)} /> : ""}
+			{showError ? <ModalError errorMessage={errorMessage} /> : ""}
 		</div>
 	);
 }

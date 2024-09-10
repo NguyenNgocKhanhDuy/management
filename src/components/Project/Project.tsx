@@ -29,6 +29,8 @@ function Project(props: any) {
 
 			const data = response.data;
 			if (data.status) {
+				console.log(data.result);
+
 				setProjectItems(data.result);
 			}
 		} catch (error: any) {
@@ -57,7 +59,7 @@ function Project(props: any) {
 						<ProjectItem key={item.name} {...item} token={props.token} setErrorMessage={(message: string) => props.setErrorMessage(message)} setShowError={(isShow: boolean) => props.setShowError(isShow)} setLoading={(isLoading: boolean) => props.setLoading(isLoading)} />
 					))}
 			</div>
-			<ModalNewProject/>
+			{props.showModalNewProject ? <ModalNewProject close={() => props.setShowModalNewProject(false)} handleGetProjectHasUser={handleGetProjectHasUser} /> : ""}
 		</div>
 	);
 }

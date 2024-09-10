@@ -12,7 +12,7 @@ interface User {
 }
 
 function ProjectItem(props: any) {
-	const [members, setMembers] = useState<User[] | null>();
+	const [members, setMembers] = useState<User[] | null>([]);
 	const [creator, setCreator] = useState<User | null>();
 
 	useEffect(() => {
@@ -64,9 +64,13 @@ function ProjectItem(props: any) {
 	};
 
 	const handleGetMembers = async () => {
-		const memberPromise = props.members.map((id: string) => handleGetUser(id));
-		const allMembers = await Promise.all(memberPromise);
-		setMembers(allMembers);
+		if (props.members) {
+			const memberPromise = props.members.map((id: string) => handleGetUser(id));
+			const allMembers = await Promise.all(memberPromise);
+			setMembers(allMembers);
+		} else {
+			return;
+		}
 	};
 
 	return (
@@ -86,12 +90,13 @@ function ProjectItem(props: any) {
 			<div className="project__item-member">
 				<span className="project__item-member-label">Member</span>
 				<div className="project__item-member-list">
-					{members?.map((member) => (
-						<div className="project__item-member-wrap" key={member.id}>
-							<img src={member.avatar} alt="" className="project__item-member-avatar" />
-							<span className="project__item-member-name">{member.username}</span>
-						</div>
-					))}
+					{members &&
+						members.map((member) => (
+							<div className="project__item-member-wrap" key={member.id}>
+								<img src={member.avatar} alt="" className="project__item-member-avatar" />
+								<span className="project__item-member-name">{member.username}</span>
+							</div>
+						))}
 				</div>
 			</div>
 		</div>

@@ -9,7 +9,7 @@ import { RootState } from "~/store/store";
 import axios from "axios";
 import ModalError from "~/components/Modal/Error/ModalError";
 import Loading from "~/components/Loading/Loading";
-import {formatDateFull, formatMonth } from "~/utils/date";
+import { formatDateFull, formatMonth } from "~/utils/date";
 
 interface User {
 	email: string;
@@ -17,7 +17,8 @@ interface User {
 }
 
 function HomePage() {
-	const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
+	const [showModalCreateTask, setShowModalCreateTask] = useState(false);
+	const [showModalNewProject, setShowModalNewProject] = useState(false);
 	const [isManagement, setIsManagement] = useState(false);
 	const [isProject, setIsProject] = useState(true);
 	const token = useSelector((state: RootState) => state.user.token);
@@ -29,10 +30,6 @@ function HomePage() {
 	useEffect(() => {
 		handleGetUser();
 	}, []);
-
-	const handleOpenCloseModalCreate = (isOpen: boolean) => {
-		setIsOpenModalCreate(isOpen);
-	};
 
 	const handleChangeToManagement = (isManagement: boolean) => {
 		setIsManagement(isManagement);
@@ -130,17 +127,36 @@ function HomePage() {
 								<i className="fa-solid fa-filter"></i>
 								<span>Filters</span>
 							</div> */}
-							<div className="new box" onClick={() => handleOpenCloseModalCreate(true)}>
-								<i className="fa-solid fa-plus"></i>
-								<span>{isManagement ? "Create task" : "New Project"}</span>
-							</div>
+							{isProject ? (
+								<div className="new box" onClick={() => setShowModalNewProject(true)}>
+									<i className="fa-solid fa-plus"></i>
+									<span>New Project</span>
+								</div>
+							) : (
+								<div className="new box" onClick={() => setShowModalCreateTask(true)}>
+									<i className="fa-solid fa-plus"></i>
+									<span>Create task</span>
+								</div>
+							)}
 						</div>
 					</div>
-					{isManagement ? <Management /> : isProject ? <Project token={token} setErrorMessage={(message: string) => setErrorMessage(message)} setShowError={(isShow: boolean) => setShowError(isShow)} setLoading={(isLoading: boolean) => setLoading(isLoading)} /> : <div>No</div>}
+					{isManagement ? (
+						<Management />
+					) : isProject ? (
+						<Project
+							token={token}
+							setErrorMessage={(message: string) => setErrorMessage(message)}
+							setShowError={(isShow: boolean) => setShowError(isShow)}
+							setLoading={(isLoading: boolean) => setLoading(isLoading)}
+							showModalNewProject={showModalNewProject}
+							setShowModalNewProject={(isShowModal: boolean) => setShowModalNewProject(isShowModal)}
+						/>
+					) : (
+						<div>No</div>
+					)}
 				</div>
 			</div>
 			{loading ? <Loading loading={loading} /> : ""}
-			{isOpenModalCreate ? <ModalCreateTask handleClose={() => handleOpenCloseModalCreate(false)} /> : ""}
 			{showError ? <ModalError errorMessage={errorMessage} /> : ""}
 		</div>
 	);

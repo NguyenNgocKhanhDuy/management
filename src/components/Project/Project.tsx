@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./project.scss";
 import ProjectItem from "~/components/ProjectItem/ProjectItem";
 import axios from "axios";
+import ModalNewProject from "../Modal/NewProject/ModalNewProject";
 
 interface ProjectItem {
 	name: string;
@@ -56,6 +57,7 @@ function Project(props: any) {
 						<ProjectItem key={item.name} {...item} token={props.token} setErrorMessage={(message: string) => props.setErrorMessage(message)} setShowError={(isShow: boolean) => props.setShowError(isShow)} setLoading={(isLoading: boolean) => props.setLoading(isLoading)} />
 					))}
 			</div>
+			<ModalNewProject/>
 		</div>
 	);
 }

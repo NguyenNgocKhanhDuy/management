@@ -5,6 +5,7 @@ import axios from "axios";
 import ModalNewProject from "../Modal/NewProject/ModalNewProject";
 
 interface ProjectItem {
+	id: string;
 	name: string;
 	date: string;
 	creator: string;
@@ -56,7 +57,16 @@ function Project(props: any) {
 			<div className="project__list">
 				{projectItems &&
 					projectItems.map((item) => (
-						<ProjectItem key={item.name} {...item} token={props.token} setErrorMessage={(message: string) => props.setErrorMessage(message)} setShowError={(isShow: boolean) => props.setShowError(isShow)} setLoading={(isLoading: boolean) => props.setLoading(isLoading)} />
+						<ProjectItem
+							key={item.id}
+							{...item}
+							token={props.token}
+							setErrorMessage={(message: string) => props.setErrorMessage(message)}
+							setShowError={(isShow: boolean) => props.setShowError(isShow)}
+							setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+							hide={() => props.hide()}
+							showManagement={() => props.showManagement()}
+						/>
 					))}
 			</div>
 			{props.showModalNewProject ? <ModalNewProject close={() => props.setShowModalNewProject(false)} handleGetProjectHasUser={handleGetProjectHasUser} /> : ""}

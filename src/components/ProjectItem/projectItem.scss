@@ -6,6 +6,12 @@
 	padding: 12px;
 	border-radius: 4px;
 	@include border(1, 1, 1, 1);
+	transition: all 0.25s linear;
+	cursor: pointer;
+
+	&:hover {
+		background-color: $yellow;
+	}
 
 	&-name {
 		font-weight: 600;

@@ -3,6 +3,8 @@ import "./projectItem.scss";
 import blackImg from "~/assets/img/black.jpg";
 import { formatMonth, isoDateFormat } from "~/utils/date";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setProjectId } from "~/store/projectSlice";
 
 interface User {
 	id: string;
@@ -14,6 +16,7 @@ interface User {
 function ProjectItem(props: any) {
 	const [members, setMembers] = useState<User[] | null>([]);
 	const [creator, setCreator] = useState<User | null>();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		handleGetMembers();
@@ -73,8 +76,14 @@ function ProjectItem(props: any) {
 		}
 	};
 
+	const handleOnClick = () => {
+		dispatch(setProjectId(props.id));
+		props.hide();
+		props.showManagement();
+	};
+
 	return (
-		<div className="project__item">
+		<div className="project__item" onClick={handleOnClick}>
 			<p className="project__item-name">{props.name}</p>
 			<div className="project__item-date">
 				<i className="fa-solid fa-calendar-days project__item-date-icon"></i>

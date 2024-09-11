@@ -112,7 +112,7 @@ function HomePage() {
 					<div className="content-top">
 						<div className="date">
 							<span className="today">{formatDateFull(new Date())}</span>
-							<span className="month">{formatMonth(new Date())}</span>
+							{/* <span className="month">{formatMonth(new Date())}</span> */}
 						</div>
 						{isManagement ? (
 							<div className="project">
@@ -149,6 +149,8 @@ function HomePage() {
 							setShowError={(isShow: boolean) => setShowError(isShow)}
 							setLoading={(isLoading: boolean) => setLoading(isLoading)}
 							showModalNewProject={showModalNewProject}
+							hide={() => setIsProject(false)}
+							showManagement={() => setIsManagement(true)}
 							setShowModalNewProject={(isShowModal: boolean) => setShowModalNewProject(isShowModal)}
 						/>
 					) : (

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import blackImg from "~/assets/img/black.jpg";
-import ModalCreateTask from "~/components/Modal/CreateTask/ModalCreateTask";
 import "./homePage.scss";
 import Management from "~/components/Management/Management";
 import Project from "~/components/Project/Project";
-import { useSelector } from "react-redux";
-import { RootState } from "~/store/store";
 import axios from "axios";
 import ModalError from "~/components/Modal/Error/ModalError";
 import Loading from "~/components/Loading/Loading";
-import { formatDateFull, formatMonth } from "~/utils/date";
+import { formatDateFull } from "~/utils/date";
+import { getToken } from "~/store/localStorage";
 
 interface User {
 	email: string;
@@ -21,11 +19,13 @@ function HomePage() {
 	const [showModalNewProject, setShowModalNewProject] = useState(false);
 	const [isManagement, setIsManagement] = useState(false);
 	const [isProject, setIsProject] = useState(true);
-	const token = useSelector((state: RootState) => state.user.token);
+	const token = getToken();
 	const [user, setUser] = useState<User>();
 	const [showError, setShowError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [projectName, setProjectName] = useState("Project Name");
+	const [isSelectproject, setIsSelectproject] = useState(false);
 
 	useEffect(() => {
 		handleGetUser();
@@ -116,7 +116,7 @@ function HomePage() {
 						</div>
 						{isManagement ? (
 							<div className="project">
-								<span>Project Name</span>
+								<span>{projectName}</span>
 							</div>
 						) : (
 							""
@@ -141,7 +141,14 @@ function HomePage() {
 						</div>
 					</div>
 					{isManagement ? (
-						<Management />
+						<Management
+							token={token}
+							setShowError={(isShow: boolean) => setShowError(isShow)}
+							setLoading={(isLoading: boolean) => setLoading(isLoading)}
+							showModalCreateTask={showModalCreateTask}
+							closeModalCreateTask={() => setShowModalCreateTask(false)}
+							isSelectProject={() => setIsSelectproject(true)}
+						/>
 					) : isProject ? (
 						<Project
 							token={token}
@@ -149,9 +156,10 @@ function HomePage() {
 							setShowError={(isShow: boolean) => setShowError(isShow)}
 							setLoading={(isLoading: boolean) => setLoading(isLoading)}
 							showModalNewProject={showModalNewProject}
+							closeModalNewProject={() => setShowModalNewProject(false)}
 							hide={() => setIsProject(false)}
 							showManagement={() => setIsManagement(true)}
-							setShowModalNewProject={(isShowModal: boolean) => setShowModalNewProject(isShowModal)}
+							setProjectName={(name: string) => setProjectName(name)}
 						/>
 					) : (
 						<div>No</div>
@@ -159,7 +167,7 @@ function HomePage() {
 				</div>
 			</div>
 			{loading ? <Loading loading={loading} /> : ""}
-			{showError ? <ModalError errorMessage={errorMessage} /> : ""}
+			{showError ? <ModalError close={() => setShowError(false)} isSelectProject={isSelectproject} errorMessage={errorMessage} hide={() => setIsManagement(false)} showProject={() => setIsProject(true)} /> : ""}	
 		</div>
 	);
 }

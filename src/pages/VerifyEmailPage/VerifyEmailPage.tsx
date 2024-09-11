@@ -1,18 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./verifyEmailPage.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "~/store/store";
 import { useNavigate } from "react-router-dom";
-import { setForgotPassword } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
 import axios from "axios";
+import { getEmail, getIsForgotPass, removeIsForgotPass } from "~/store/localStorage";
 
 function VerifyEmailPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-	const email = useSelector((state: RootState) => state.user.email);
-	const isForgotPassword = useSelector((state: RootState) => state.user.isForgotPass);
-	const dispatch = useDispatch();
+	const email = getEmail();
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 
@@ -52,8 +49,7 @@ function VerifyEmailPage() {
 			const data = response.data;
 			if (data.status) {
 				if (data.result.valid) {
-					if (isForgotPassword) {
-						dispatch(setForgotPassword(false));
+					if (getIsForgotPass()) {
 						navigate("/newPass");
 					} else {
 						navigate("/login");

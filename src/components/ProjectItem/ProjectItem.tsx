@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./projectItem.scss";
-import blackImg from "~/assets/img/black.jpg";
 import { formatMonth, isoDateFormat } from "~/utils/date";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setProjectId } from "~/store/projectSlice";
+import { setProjectId } from "~/store/localStorage";
 
 interface User {
 	id: string;
@@ -16,7 +14,6 @@ interface User {
 function ProjectItem(props: any) {
 	const [members, setMembers] = useState<User[] | null>([]);
 	const [creator, setCreator] = useState<User | null>();
-	const dispatch = useDispatch();
 
 	useEffect(() => {
 		handleGetMembers();
@@ -77,7 +74,8 @@ function ProjectItem(props: any) {
 	};
 
 	const handleOnClick = () => {
-		dispatch(setProjectId(props.id));
+		setProjectId(props.id);
+		props.setProjectName(props.name);
 		props.hide();
 		props.showManagement();
 	};

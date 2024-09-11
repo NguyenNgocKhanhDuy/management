@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import "./modalNewProject.scss";
 import Loading from "~/components/Loading/Loading";
-import { RootState } from "~/store/store";
-import { useSelector } from "react-redux";
 import axios from "axios";
 
 function ModalNewProject(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [loading, setLoading] = useState(false);
-	const token = useSelector((state: RootState) => state.user.token);
+	const token = props.token;
 
 	const handleNewProject = async (event: any) => {
 		event.preventDefault();

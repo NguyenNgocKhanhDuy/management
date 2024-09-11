@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import "./modalForgotPassword.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { handleCheckEmail } from "~/utils/validation";
-import { useDispatch } from "react-redux";
-import { saveEmail, setForgotPassword } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
 import axios from "axios";
+import { saveEmail, setIsForgotPass } from "~/store/localStorage";
 
 function ModalForgotPassword(props: any) {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (event: any) => {
@@ -37,8 +35,8 @@ function ModalForgotPassword(props: any) {
 
 				const data = response.data;
 				if (data.status) {
-					dispatch(saveEmail(emailInput.value));
-					dispatch(setForgotPassword(true));
+					saveEmail(emailInput.value);
+					setIsForgotPass(true);
 					navigate("/verifyEmail");
 				}
 			} catch (error: any) {

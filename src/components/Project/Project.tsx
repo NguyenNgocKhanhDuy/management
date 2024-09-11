@@ -31,7 +31,6 @@ function Project(props: any) {
 			const data = response.data;
 			if (data.status) {
 				console.log(data.result);
-
 				setProjectItems(data.result);
 			}
 		} catch (error: any) {
@@ -66,10 +65,11 @@ function Project(props: any) {
 							setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
 							hide={() => props.hide()}
 							showManagement={() => props.showManagement()}
+							setProjectName={(name: string) => props.setProjectName(name)}
 						/>
 					))}
 			</div>
-			{props.showModalNewProject ? <ModalNewProject close={() => props.setShowModalNewProject(false)} handleGetProjectHasUser={handleGetProjectHasUser} /> : ""}
+			{props.showModalNewProject ? <ModalNewProject token={props.token} close={() => props.closeModalNewProject()} handleGetProjectHasUser={handleGetProjectHasUser} /> : ""}
 		</div>
 	);
 }

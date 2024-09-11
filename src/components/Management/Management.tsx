@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import TaskStatus from "~/components/TaskStatus/TaskStatus";
 import "./management.scss";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { RootState } from "~/store/store";
 import Loading from "../Loading/Loading";
+import { getProjectId } from "~/store/localStorage";
+import ModalCreateTask from "../Modal/CreateTask/ModalCreateTask";
 
 interface Task {
 	creator: string;
@@ -17,10 +17,9 @@ interface Task {
 	status: number;
 }
 
-function Management() {
-	const token = useSelector((state: RootState) => state.user.token);
-	const idProject = useSelector((state: RootState) => state.project.idProject);
-	const [loading, setLoading] = useState(false);
+function Management(props: any) {
+	const token = props.token;
+	const idProject = getProjectId();
 
 	const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -39,9 +38,8 @@ function Management() {
 
 			const data = response.data;
 			if (data.status) {
-				setLoading(false);
-				setTasks(data.result);
 				console.log(data.result);
+				setTasks(data.result);
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -51,16 +49,42 @@ function Management() {
 			} else {
 				console.error("Error:", error.message);
 			}
-			setLoading(false);
+			props.setLoading(false);
+			props.isSelectProject();
+			props.setShowError(true);
 		}
 	};
 
 	return (
 		<div className="management">
-			<TaskStatus statusName="To Do List" statusClassName="todo-list" tasks={tasks?.filter((task: Task) => task.status == 0)} />
-			<TaskStatus statusName="Pending" statusClassName="pending" tasks={tasks?.filter((task: Task) => task.status == 1)} />
-			<TaskStatus statusName="Done" statusClassName="done" tasks={tasks?.filter((task: Task) => task.status == 2)} />
-			{loading ? <Loading loading={loading} /> : ""}
+			<TaskStatus
+				token={props.token}
+				statusName="To Do List"
+				statusClassName="todo-list"
+				tasks={tasks?.filter((task: Task) => task.status == 0)}
+				setErrorMessage={(message: string) => props.setErrorMessage(message)}
+				setShowError={(isShow: boolean) => props.setShowError(isShow)}
+				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+			/>
+			<TaskStatus
+				token={props.token}
+				statusName="Pending"
+				statusClassName="pending"
+				tasks={tasks?.filter((task: Task) => task.status == 1)}
+				setErrorMessage={(message: string) => props.setErrorMessage(message)}
+				setShowError={(isShow: boolean) => props.setShowError(isShow)}
+				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+			/>
+			<TaskStatus
+				token={props.token}
+				statusName="Done"
+				statusClassName="done"
+				tasks={tasks?.filter((task: Task) => task.status == 2)}
+				setErrorMessage={(message: string) => props.setErrorMessage(message)}
+				setShowError={(isShow: boolean) => props.setShowError(isShow)}
+				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+			/>
+			{props.showModalCreateTask ? <ModalCreateTask close={() => props.closeModalCreateTask()} /> : ""}
 		</div>
 	);
 }

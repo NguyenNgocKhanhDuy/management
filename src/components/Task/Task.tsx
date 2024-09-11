@@ -1,10 +1,59 @@
-import React, { useState } from "react";
-import { useDrag } from "react-dnd";
-import blackImg from "~/assets/img/black.jpg";
+import React, { useEffect, useState } from "react";
 import "./task.scss";
 import { formatMonth } from "~/utils/date";
+import axios from "axios";
+
+interface User {
+	id: string;
+	email: string;
+	username: string;
+	avatar: string;
+}
 
 function Task(props: any) {
+	const [creator, setCreator] = useState<User | null>();
+
+	useEffect(() => {
+		handleGetCreator();
+	}, []);
+
+	const handleGetUser = async (id: string) => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/${id}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${props.token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				return data.result;
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+				props.setShowError(true);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+				props.setShowError(true);
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+				props.setShowError(true);
+			}
+			props.setLoading(false);
+		}
+	};
+
+	const handleGetCreator = async () => {
+		const creatorPromise = handleGetUser(props.creator);
+		const creatorUser = await creatorPromise;
+		setCreator(creatorUser);
+	};
+
 	const handleFormatDate = (dateString: string) => {
 		const date = new Date(dateString);
 		return formatMonth(date) + " " + date.getDate();
@@ -31,7 +80,10 @@ function Task(props: any) {
 				</div>
 			</div>
 			<div className="task-item-bottom">
-				<img src={blackImg} alt="avatar" className="avatar" />
+				<div className="task-item-bottom-wrap">
+					<img src={creator?.avatar} alt="avatar" className="avatar" />
+					<span className="task-item-bottom-name">{creator?.username}</span>
+				</div>
 				<div className="more">
 					<div className="date">
 						<i className="fa-solid fa-flag"></i>

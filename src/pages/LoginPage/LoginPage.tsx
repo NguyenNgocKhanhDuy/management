@@ -4,15 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import ModalForgotPassword from "~/components/Modal/ForgotPassword/ModalForgotPassword";
 import { handleCheckEmail, handleCheckPassword } from "~/utils/validation";
 import Loading from "~/components/Loading/Loading";
-import { useDispatch } from "react-redux";
-import { saveToken } from "~/store/userSlice";
 import axios from "axios";
+import { saveToken } from "~/store/localStorage";
 
 function LoginPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showModalForgotPass, setShowModalForgotPass] = useState(false);
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (event: any) => {
@@ -45,7 +43,7 @@ function LoginPage() {
 
 				const data = response.data;
 				if (data.status) {
-					dispatch(saveToken(data.result.token));
+					saveToken(data.result.token);
 					navigate("/home");
 				}
 			} catch (error: any) {

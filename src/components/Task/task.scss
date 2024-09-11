@@ -97,10 +97,32 @@
 		padding-top: 12px;
 		@include border(1, 0, 0, 0);
 
+		&-wrap {
+			position: relative;
+			cursor: pointer;
+			transition: all 0.25s linear;
+
+			&:hover .task-item-bottom-name {
+				display: block;
+			}
+		}
+
 		.avatar {
 			width: 20px;
 			height: 20px;
 			border-radius: 50%;
+		}
+
+		&-name {
+			display: none;
+			position: absolute;
+			width: max-content;
+			top: 110%;
+			left: 0%;
+			padding: 4px 8px;
+			border-radius: 4px;
+			color: white;
+			background-color: rgba($color: #000000, $alpha: 0.6);
 		}
 
 		.more {

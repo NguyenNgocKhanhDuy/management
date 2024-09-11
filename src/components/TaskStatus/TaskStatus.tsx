@@ -1,7 +1,6 @@
 import React from "react";
 import "./taskStatus.scss";
 import Task from "~/components/Task/Task";
-import { useDrop } from "react-dnd";
 
 function TaskStatus(props: any) {
 	return (
@@ -10,7 +9,7 @@ function TaskStatus(props: any) {
 			{/* <i className="fa-solid fa-plus add"></i> */}
 			<div className="list">
 				{props.tasks.map((task: any) => (
-					<Task key={task.id} {...task} />
+					<Task key={task.id} {...task} token={props.token} setErrorMessage={(message: string) => props.setErrorMessage(message)} setShowError={(isShow: boolean) => props.setShowError(isShow)} setLoading={(isLoading: boolean) => props.setLoading(isLoading)} />
 				))}
 			</div>
 		</div>

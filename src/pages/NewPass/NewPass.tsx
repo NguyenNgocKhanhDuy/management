@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./newPass.scss";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "~/store/store";
-import { setForgotPassword } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
 import axios from "axios";
+import { getEmail, removeIsForgotPass } from "~/store/localStorage";
 
 function NewPass() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
-	const email = useSelector((state: RootState) => state.user.email);
-	const dispatch = useDispatch();
+	const email = getEmail();
 	const [loading, setLoading] = useState(false);
 
 	const handleCheckPassword = (password: string) => {
@@ -53,7 +50,7 @@ function NewPass() {
 				const data = response.data;
 
 				if (data.status) {
-					dispatch(setForgotPassword(false));
+					removeIsForgotPass();
 					navigate("/login");
 				}
 			} catch (error: any) {

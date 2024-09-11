@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./register.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { saveEmail } from "~/store/userSlice";
 import Loading from "~/components/Loading/Loading";
 import axios from "axios";
+import { saveEmail } from "~/store/localStorage";
 
 function RegisterPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 
 	const handleCheckEmail = (email: string) => {
@@ -60,7 +58,7 @@ function RegisterPage() {
 				const data = response.data;
 
 				if (data.status) {
-					dispatch(saveEmail(emailInput.value));
+					saveEmail(emailInput.value);
 					navigate("/verifyEmail");
 				}
 			} catch (error: any) {

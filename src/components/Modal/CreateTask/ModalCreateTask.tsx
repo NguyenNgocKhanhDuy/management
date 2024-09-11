@@ -9,10 +9,6 @@ function ModalCreateTask(props: any) {
 	const selectColorRef = useRef<HTMLSelectElement>(null);
 	const [date, setDate] = useState<Date | null>(new Date());
 
-	const handleClose = () => {
-		props.handleClose();
-	};
-
 	const handleChangeCategoryTest = () => {
 		if (inputCategoryRef.current && categoryTestRef.current) {
 			var text = inputCategoryRef.current.value;
@@ -30,7 +26,7 @@ function ModalCreateTask(props: any) {
 	return (
 		<div className="modal">
 			<div className="modal-container">
-				<i className="fa-solid fa-xmark close" onClick={handleClose}></i>
+				<i className="fa-solid fa-xmark close" onClick={() => props.close()}></i>
 				<h2 className="title">Create Task</h2>
 				{/* <div className="category">
 						<input type="text" className="category-name" placeholder="Category..." ref={inputCategoryRef} onInput={handleChangeCategoryTest} />
@@ -53,9 +49,7 @@ function ModalCreateTask(props: any) {
 
 				<input type="text" className="titleInput" placeholder="Task..." />
 				<textarea className="desc" placeholder="Description..."></textarea>
-				<button className="btn" onClick={handleClose}>
-					Create
-				</button>
+				<button className="btn">Create</button>
 			</div>
 		</div>
 	);

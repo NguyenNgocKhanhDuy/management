@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./task.scss";
 import { formatMonth } from "~/utils/date";
 import axios from "axios";
+import ModalEditTask from "../Modal/EditTask/ModalEditTask";
 
 interface User {
 	id: string;
@@ -12,6 +13,8 @@ interface User {
 
 function Task(props: any) {
 	const [creator, setCreator] = useState<User | null>();
+	const [showModalEditTask, setShowModalEditTask] = useState(false);
+	const [taskId, setTaskId] = useState("");
 
 	useEffect(() => {
 		handleGetCreator();
@@ -59,8 +62,13 @@ function Task(props: any) {
 		return formatMonth(date) + " " + date.getDate();
 	};
 
+	const handleEditTask = () => {
+		setTaskId(props.id);
+		setShowModalEditTask(true);
+	};
+
 	return (
-		<div className="task-item">
+		<div className="task-item" onClick={handleEditTask}>
 			<div className="task-item-date">
 				<i className="fa-solid fa-calendar-days"></i>
 				<span className="dateTime">{handleFormatDate(props.date)}</span>
@@ -95,6 +103,19 @@ function Task(props: any) {
 					</div> */}
 				</div>
 			</div>
+			{showModalEditTask ? (
+				<ModalEditTask
+					token={props.token}
+					close={() => setShowModalEditTask(false)}
+					creator={creator}
+					taskId={taskId}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+				/>
+			) : (
+				""
+			)}
 		</div>
 	);
 }

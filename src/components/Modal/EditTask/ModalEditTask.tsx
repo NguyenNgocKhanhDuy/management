@@ -1,138 +1,325 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./modalEditTask.scss";
-import blackImg from "~/assets/img/black.jpg";
-import DatePicker  from "react-datepicker";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
-import Checkbox from '@mui/material/Checkbox';
+import Checkbox from "@mui/material/Checkbox";
 import { TextareaAutosize } from "@mui/material";
+import axios from "axios";
+import { formatMonth } from "~/utils/date";
 
 interface SubTask {
-	id: number;
-	text: string;
-	isCompleted: boolean;
+	id: string;
+	title: string;
+	completed: boolean;
 	isEditable: boolean;
 }
 
-function ModalEditTask() {
-	const inputCategoryRef = useRef<HTMLInputElement>(null);
-	const categoryTestRef = useRef<HTMLDivElement>(null);
-	const selectColorRef = useRef<HTMLSelectElement>(null);
-	const [isEditCategory, setIsEditCategory] = useState(false);
-	const [deadline, setDeadline] = useState<Date | null>(new Date());
-	const [subtask, setSubTask] = useState<SubTask[]>([
-		{ id: 1, text: "Task 1", isCompleted: false, isEditable: false },
-		{ id: 2, text: "Task 2", isCompleted: true, isEditable: false },
-		{ id: 3, text: "Task 3", isCompleted: false, isEditable: false },
-		{ id: 4, text: "Task 4", isCompleted: false, isEditable: false },
-		{
-			id: 5,
-			text: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores numquam quibusdam dolor possimus quam et doloremque dolorum reiciendis nam tempora temporibus eveniet eaque ex natus sed repudiandae inventore, quaerat dolores. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores facilis, aspernatur quae architecto laudantium repellendus corporis perferendis quam quasi ipsum unde laborum qui libero vero quaerat quis cumque beatae saepe!",
-			isCompleted: true,
-			isEditable: false,
-		},
-		{ id: 6, text: "Task 6", isCompleted: true, isEditable: false },
-	]);
+interface User {
+	id: string;
+	email: string;
+	username: string;
+	avatar: string;
+}
 
-	const handleChangeCategoryTest = () => {
-		if (inputCategoryRef.current && categoryTestRef.current) {
-			var text = inputCategoryRef.current.value;
-			categoryTestRef.current.innerText = text.length > 0 ? text : "Category...";
-		}
-	};
+interface Task {
+	creator: string;
+	date: string;
+	deadline: Date;
+	id: string;
+	members: string[];
+	name: string;
+	project: string;
+	status: number;
+}
 
-	const handleSelectColor = (event: any) => {
-		if (selectColorRef.current && categoryTestRef.current) {
-			selectColorRef.current.style.backgroundColor = event.target.value;
-			categoryTestRef.current.style.backgroundColor = event.target.value;
-		}
-	};
+function ModalEditTask(props: any) {
+	const [deadline, setDeadline] = useState<Date | null>();
+	const [subtasks, setSubtasks] = useState<SubTask[]>([]);
+	const [task, setTask] = useState<Task>();
+	const [creator, setCreator] = useState<User>();
 
-	const handleChangeDateFormat = (dateString : string) => {
+	useEffect(() => {
+		handleGetSubTasks();
+		handleGetTask();
+		setCreator(props.creator);
+	}, []);
+
+	const handleChangeDateFormat = (dateString: string) => {
 		const date = new Date(dateString);
-		const formatDate = format(date, 'MMMM do, yyyy');
-		return formatDate;
-	}
+		return formatMonth(date) + " " + date.getDate() + ", " + date.getFullYear();
+	};
 
-	const handleEditSubTask = (newText:string, id:number) => {
-		const updateSubTask = subtask.map(subtask => {
+	const handleChangeTitleSubTask = async (newText: string, id: string) => {
+		const updateSubTask = subtasks.map((subtask) => {
 			if (subtask.id === id) {
-                return {...subtask, text: newText };
-            }
-            return subtask;
-		})
-		setSubTask(updateSubTask);
-	}
+				return { ...subtask, title: newText };
+			}
+			return subtask;
+		});
+		setSubtasks(updateSubTask);
+	};
 
-	const handleEnableEditSubTask = (id:number, isEditable : boolean) => {
-		const updateSubTask = subtask.map(subtask => {
+	const handleSubmitEdit = async (id: string, newText: string) => {
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/subtasks/updateSubtaskTitle`,
+				{
+					id: id,
+					title: newText,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				handleGetSubTasks();
+				handleEnableEditSubTask(id, false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+			} else {
+				console.error("Error:", error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleCheckSubtask = async (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+		// const updateSubTask = subtasks.map((subtask) => {
+		// 	if (subtask.id === id) {
+		// 		return { ...subtask, completed: event.target.checked };
+		// 	}
+		// 	return subtask;
+		// });
+		// setSubtasks(updateSubTask);
+
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/subtasks/updateSubtaskStatus`,
+				{
+					id: id,
+					completed: event.target.checked,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				handleGetSubTasks();
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+			} else {
+				console.error("Error:", error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleEnableEditSubTask = (id: string, isEditable: boolean) => {
+		const updateSubTask = subtasks.map((subtask) => {
 			if (subtask.id === id) {
-                return {...subtask, isEditable: isEditable };
-            }
-            return subtask;
-		})
-		setSubTask(updateSubTask);
-	}
+				return { ...subtask, isEditable: isEditable };
+			}
+			return subtask;
+		});
+		setSubtasks(updateSubTask);
+	};
 
-	const handleDeleteSubTask = (id: number) => {
-        const updateSubTask = subtask.filter(subtask => subtask.id !== id);
-        setSubTask(updateSubTask); 
-	}
-	
-	const handleNewSubTask = () => {
-		const newSubTask = { id: subtask.length + 1, text: `New Task ${subtask.length + 1}`, isCompleted: false, isEditable: false};
-        setSubTask([...subtask, newSubTask]);
-	}
+	const handleDeleteSubTask = async (id: string) => {
+		const updateSubTask = subtasks.filter((subtask) => subtask.id !== id);
+		setSubtasks(updateSubTask);
 
-	
-	
+		try {
+			const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/subtasks/${id}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${props.token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				handleGetSubTasks();
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+			} else {
+				console.error("Error:", error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleNewSubTask = async () => {
+		try {
+			const response = await axios.post(
+				`${process.env.REACT_APP_API_BASE_URL}/subtasks/addSubtask`,
+				{
+					title: `New Task ${subtasks.length + 1}`,
+					completed: false,
+					task: props.taskId,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				handleGetSubTasks();
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+			} else {
+				console.error("Error:", error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleGetSubTasks = async () => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/subtasks/${props.taskId}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${props.token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				console.log(data.result);
+
+				setSubtasks(data.result);
+				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleGetTask = async () => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tasks/${props.taskId}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${props.token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				setTask(data.result);
+				setDeadline(data.result.deadline);
+				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleClose = (e: any) => {
+		e.stopPropagation();
+		props.close();
+	};
 
 	return (
 		<div>
 			<div className="modal-edit">
-				<div className="modal-edit-container">
-					<i className="fa-solid fa-xmark close"></i>
-					<h2>Task Name</h2>
-					<div className="info">
-						<div className="creator">
-							<img src={blackImg} alt="avatar-creator" className="avatar" />
-							<p className="name">Nguyen Ngoc Khanh Duy</p>
+				<div className="modal-edit__container">
+					<i className="fa-solid fa-xmark modal-edit__close" onClick={handleClose}></i>
+					<h2>{task?.name}</h2>
+					<div className="modal-edit__info">
+						<div className="modal-edit__creator">
+							<img src={creator?.avatar} alt="avatar-creator" className="modal-edit__creator-avatar" />
+							<p className="modal-edit__creator-name">{creator?.username}</p>
 						</div>
-						<div className="date-create">
+						<div className="modal-edit__date-create">
 							<i className="fa-regular fa-calendar"> :</i>
-							<span>{handleChangeDateFormat("2024-08-02")}</span>
+							{task && <span>{handleChangeDateFormat(task.date)}</span>}
 						</div>
 					</div>
-					<div className="desc">
+					{/* <div className="modal-edit__desc">
 						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores numquam quibusdam dolor possimus quam et doloremque dolorum reiciendis nam tempora temporibus eveniet eaque ex natus sed repudiandae inventore, quaerat dolores. Lorem ipsum, dolor sit amet consectetur adipisicing
 						elit. Dolores facilis, aspernatur quae architecto laudantium repellendus corporis perferendis quam quasi ipsum unde laborum qui libero vero quaerat quis cumque beatae saepe!
-					</div>
-					<div className="wrap">
-						<div className="date-deadline">
+					</div> */}
+					<div className="modal-edit__wrap">
+						<div className="modal-edit__date-deadline">
 							<i className="fa-regular fa-clock"> :</i>
-							<DatePicker selected={deadline} onChange={(date) => setDeadline(date)} showTimeSelect dateFormat="MMMM do YYYY, hh:mm:ss a" className="date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
+							<DatePicker selected={deadline} onChange={(date) => setDeadline(date)} showTimeSelect dateFormat="MMMM do YYYY, hh:mm" className="modal-edit__date-deadline-date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
 						</div>
-						<button className="new-subtask" onClick={handleNewSubTask}>New subtask</button>
+						<button className="modal-edit__new-subtask" onClick={handleNewSubTask}>
+							New subtask
+						</button>
 					</div>
-					<div className="progress">
-						<div className="text">
+					<div className="modal-edit__progress">
+						<div className="modal-edit__progress-text">
 							<span>Progress</span>
-							<span className="percentage">50%</span>
+							<span className="modal-edit__progress-percentage">50%</span>
 						</div>
-						<span className="full"></span>
-						<span className="capacity"></span>
+						<span className="modal-edit__progress-full"></span>
+						<span className="modal-edit__progress-capacity"></span>
 					</div>
-					<div className="subtask">
-						{subtask.map((subtask: SubTask) => (
-							<div className="subtask-item" key={subtask.id}>
-								<Checkbox checked={subtask.isCompleted} className="subtask-item-checkbox" />
-								<TextareaAutosize className="subtask-item-text" value={subtask.text} onChange={(e) => handleEditSubTask(e.target.value, subtask.id)} readOnly={!subtask.isEditable} />
-								<div className="action">
-									{subtask.isEditable ?
-										<i className="fa-solid fa-check" onClick={() => handleEnableEditSubTask(subtask.id, false)} ></i>
-										:
-										<i className="fa-solid fa-pen-to-square" onClick={() => handleEnableEditSubTask(subtask.id, true)} ></i>}
-									
+					<div className="modal-edit__subtask">
+						{subtasks.map((subtask: SubTask) => (
+							<div className="modal-edit__subtask-item" key={subtask.id}>
+								<Checkbox checked={subtask.completed} className="modal-edit__subtask-item-checkbox" onChange={(e) => handleCheckSubtask(e, subtask.id)} />
+								<TextareaAutosize className="modal-edit__subtask-item-text" value={subtask.title} onChange={(e) => handleChangeTitleSubTask(e.target.value, subtask.id)} readOnly={!subtask.isEditable} />
+								<div className="modal-edit__subtask-item-action">
+									{subtask.isEditable ? <i className="fa-solid fa-check" onClick={() => handleSubmitEdit(subtask.id, subtask.title)}></i> : <i className="fa-solid fa-pen-to-square" onClick={() => handleEnableEditSubTask(subtask.id, true)}></i>}
+
 									<i className="fa-solid fa-trash" onClick={() => handleDeleteSubTask(subtask.id)}></i>
 								</div>
 							</div>

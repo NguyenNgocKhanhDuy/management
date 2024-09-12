@@ -1,26 +1,22 @@
 @import "../../assets/style/base.scss";
 
-body {
-    justify-content: baseline !important;
-}
-
 .management {
-    height: calc(100% - 56px);
-    padding-bottom: 16px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 16px;
+	height: calc(100% - 56px);
+	padding-bottom: 16px;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	gap: 16px;
 
-    .todo-list-section .name::after{
-        background-color: pink;
-    }
+	.todo-list-section .name::after {
+		background-color: pink;
+	}
 
-    .pending-section .name::after{
-        background-color: orange;
-    }
+	.pending-section .name::after {
+		background-color: orange;
+	}
 
-    .done-section .name::after{
-        background-color: $lightGreen;
-    }
+	.done-section .name::after {
+		background-color: $lightGreen;
+	}
 }

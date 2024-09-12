@@ -7,7 +7,7 @@ import axios from "axios";
 import ModalError from "~/components/Modal/Error/ModalError";
 import Loading from "~/components/Loading/Loading";
 import { formatDateFull } from "~/utils/date";
-import { getToken } from "~/store/localStorage";
+import { getProjectId, getToken } from "~/store/localStorage";
 
 interface User {
 	email: string;
@@ -26,10 +26,17 @@ function HomePage() {
 	const [loading, setLoading] = useState(false);
 	const [projectName, setProjectName] = useState("Project Name");
 	const [isSelectproject, setIsSelectproject] = useState(false);
+	const [editProjectName, setEditProjectName] = useState(false);
 
 	useEffect(() => {
 		handleGetUser();
 	}, []);
+
+	useEffect(() => {
+		if (isManagement) {
+			handleGetProjectName();
+		}
+	}, [isManagement]);
 
 	const handleChangeToManagement = (isManagement: boolean) => {
 		setIsManagement(isManagement);
@@ -70,6 +77,88 @@ function HomePage() {
 				setShowError(true);
 			}
 			setLoading(false);
+		}
+	};
+
+	const handleUpdateProjectName = async () => {
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/projects/updateName`,
+				{
+					id: getProjectId(),
+					name: projectName,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				setLoading(false);
+				setEditProjectName(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				setErrorMessage(error.response.data.message);
+				setShowError(true);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				setErrorMessage("Failed to connect to server.");
+				setShowError(true);
+			} else {
+				console.error("Error:", error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+				setShowError(true);
+			}
+			setLoading(false);
+		}
+	};
+
+	const handleGetProjectName = async () => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/${getProjectId()}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				console.log("ok");
+				console.log(data.result);
+
+				setProjectName(data.result.name);
+				setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			setLoading(false);
+			setShowError(true);
+		}
+	};
+
+	const handleChangeToEdit = () => {
+		setEditProjectName(true);
+
+		const inputElement = document.querySelector(".project-name-input") as HTMLInputElement;
+
+		if (inputElement) {
+			inputElement.focus();
 		}
 	};
 
@@ -116,7 +205,9 @@ function HomePage() {
 						</div>
 						{isManagement ? (
 							<div className="project">
-								<span>{projectName}</span>
+								<input type="text" className="project-name-input" value={projectName} readOnly={!editProjectName} onChange={(e) => setProjectName(e.target.value)} />
+								{/* <span>{projectName}</span> */}
+								<span className="project-name-edit">{editProjectName ? <i className="fa-solid fa-check" onClick={handleUpdateProjectName}></i> : <i className="fa-solid fa-pen-to-square" onClick={handleChangeToEdit}></i>}</span>
 							</div>
 						) : (
 							""
@@ -143,6 +234,7 @@ function HomePage() {
 					{isManagement ? (
 						<Management
 							token={token}
+							setErrorMessage={(message: string) => setErrorMessage(message)}
 							setShowError={(isShow: boolean) => setShowError(isShow)}
 							setLoading={(isLoading: boolean) => setLoading(isLoading)}
 							showModalCreateTask={showModalCreateTask}
@@ -167,7 +259,7 @@ function HomePage() {
 				</div>
 			</div>
 			{loading ? <Loading loading={loading} /> : ""}
-			{showError ? <ModalError close={() => setShowError(false)} isSelectProject={isSelectproject} errorMessage={errorMessage} hide={() => setIsManagement(false)} showProject={() => setIsProject(true)} /> : ""}	
+			{showError ? <ModalError close={() => setShowError(false)} isSelectProject={isSelectproject} errorMessage={errorMessage} hide={() => setIsManagement(false)} showProject={() => setIsProject(true)} /> : ""}
 		</div>
 	);
 }

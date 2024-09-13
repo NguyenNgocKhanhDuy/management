@@ -3,6 +3,7 @@ import "./task.scss";
 import { formatMonth } from "~/utils/date";
 import axios from "axios";
 import ModalEditTask from "../Modal/EditTask/ModalEditTask";
+import { Draggable } from "react-beautiful-dnd";
 
 interface User {
 	id: string;
@@ -68,55 +69,59 @@ function Task(props: any) {
 	};
 
 	return (
-		<div className="task-item" onClick={handleEditTask}>
-			<div className="task-item-date">
-				<i className="fa-solid fa-calendar-days"></i>
-				<span className="dateTime">{handleFormatDate(props.date)}</span>
-			</div>
-			<div className="task-item-content">
-				<h2 className="task-item-content-title">{props.name}</h2>
-				{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
-			</div>
-			<div className="task-item-progress">
-				<div className="status">
-					<h2 className="title">Progress</h2>
-					<span className="percentage">50%</span>
-				</div>
-				<div className="line">
-					<span className="full"></span>
-					<span className="capacity"></span>
-				</div>
-			</div>
-			<div className="task-item-bottom">
-				<div className="task-item-bottom-wrap">
-					<img src={creator?.avatar} alt="avatar" className="avatar" />
-					<span className="task-item-bottom-name">{creator?.username}</span>
-				</div>
-				<div className="more">
-					<div className="date">
-						<i className="fa-solid fa-flag"></i>
-						<span className="dateTime">{handleFormatDate(props.deadline)}</span>
+		<Draggable draggableId={props.id} index={props.position}>
+			{(provided) => (
+				<div className="task-item" onClick={handleEditTask} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
+					<div className="task-item-date">
+						<i className="fa-solid fa-calendar-days"></i>
+						<span className="dateTime">{handleFormatDate(props.date)}</span>
 					</div>
-					{/* <div className="comment">
+					<div className="task-item-content">
+						<h2 className="task-item-content-title">{props.name}</h2>
+						{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
+					</div>
+					<div className="task-item-progress">
+						<div className="status">
+							<h2 className="title">Progress</h2>
+							<span className="percentage">50%</span>
+						</div>
+						<div className="line">
+							<span className="full"></span>
+							<span className="capacity"></span>
+						</div>
+					</div>
+					<div className="task-item-bottom">
+						<div className="task-item-bottom-wrap">
+							<img src={creator?.avatar} alt="avatar" className="avatar" />
+							<span className="task-item-bottom-name">{creator?.username}</span>
+						</div>
+						<div className="more">
+							<div className="date">
+								<i className="fa-solid fa-flag"></i>
+								<span className="dateTime">{handleFormatDate(props.deadline)}</span>
+							</div>
+							{/* <div className="comment">
 						<i className="fa-solid fa-message"></i>
 						<span className="amount">2</span>
 					</div> */}
+						</div>
+					</div>
+					{showModalEditTask ? (
+						<ModalEditTask
+							token={props.token}
+							close={() => setShowModalEditTask(false)}
+							creator={creator}
+							taskId={taskId}
+							setErrorMessage={(message: string) => props.setErrorMessage(message)}
+							setShowError={(isShow: boolean) => props.setShowError(isShow)}
+							setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+						/>
+					) : (
+						""
+					)}
 				</div>
-			</div>
-			{showModalEditTask ? (
-				<ModalEditTask
-					token={props.token}
-					close={() => setShowModalEditTask(false)}
-					creator={creator}
-					taskId={taskId}
-					setErrorMessage={(message: string) => props.setErrorMessage(message)}
-					setShowError={(isShow: boolean) => props.setShowError(isShow)}
-					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
-				/>
-			) : (
-				""
 			)}
-		</div>
+		</Draggable>
 	);
 }
 

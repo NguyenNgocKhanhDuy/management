@@ -5,6 +5,8 @@ import axios from "axios";
 import Loading from "../Loading/Loading";
 import { getProjectId } from "~/store/localStorage";
 import ModalCreateTask from "../Modal/CreateTask/ModalCreateTask";
+import Task from "../Task/Task";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 interface Task {
 	creator: string;
@@ -14,7 +16,8 @@ interface Task {
 	members: string[];
 	name: string;
 	project: string;
-	status: number;
+	status: string;
+	position: number;
 }
 
 function Management(props: any) {
@@ -38,8 +41,99 @@ function Management(props: any) {
 
 			const data = response.data;
 			if (data.status) {
-				console.log(data.result);
 				setTasks(data.result);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+			} else {
+				console.error("Error:", error.message);
+			}
+			props.setLoading(false);
+			props.isSelectProject();
+			props.setShowError(true);
+		}
+	};
+
+	const handleSortByPosition = (tasks: Task[]) => {
+		return tasks.sort((a, b) => a.position - b.position);
+	};
+
+	const handleOnDragEnd = async (result: DropResult) => {
+		const { source, destination, draggableId } = result;
+		console.log(result);
+
+		if (!destination) return;
+
+		if (source.index === destination.index && source.droppableId === destination.droppableId) return;
+
+		const updateTasks = [...tasks];
+		// if (source.droppableId === destination.droppableId) {
+		// 	const [removeTask] = updateTasks.filter((task) => task.id === draggableId);
+		// 	const afterRemove = updateTasks.filter((task) => task.id !== draggableId);
+		// 	const taskInStatus = afterRemove.filter((task) => task.status === destination.droppableId);
+		// 	console.log(taskInStatus);
+		// 	taskInStatus.splice(destination.index, 0, removeTask);
+		// 	updateTasks.map((task) => {
+		// 		taskInStatus.map((task2, index) => {
+		// 			if (task.id === task2.id) {
+		// 				task.position = index;
+		// 			}
+		// 		});
+		// 	});
+		// 	setTasks(updateTasks);
+		// 	console.log(updateTasks);
+		// } else {
+			// updateTasks.map((task) => {
+			// 	if (task.id === draggableId) {
+			// 		task.status = destination.droppableId;
+			// 		task.position = destination.index;
+			// 	}
+			// });
+
+			// setTasks(updateTasks);
+
+			const [removeTask] = updateTasks.filter((task) => task.id === draggableId);
+			const afterRemove = updateTasks.filter((task) => task.id !== draggableId);
+			const taskInStatus = afterRemove.filter((task) => task.status === destination.droppableId);
+			console.log(taskInStatus);
+			taskInStatus.splice(destination.index, 0, removeTask);
+			updateTasks.map((task) => {
+				taskInStatus.map((task2, index) => {
+					if (task.id === task2.id) {
+						if (task.id === draggableId) {
+							task.status = destination.droppableId;
+						}
+						task.position = index;
+					}
+				});
+			});
+			setTasks(updateTasks);
+			console.log(updateTasks);
+		// }
+
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/tasks/updateTaskStatusAndPosition`,
+				updateTasks.map((task) => ({
+					id: task.id,
+					status: task.status,
+					position: task.position,
+				})),
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				console.log(updateTasks);
+				handleGetTaskOfProject();
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -57,33 +151,38 @@ function Management(props: any) {
 
 	return (
 		<div className="management">
-			<TaskStatus
-				token={props.token}
-				statusName="To Do List"
-				statusClassName="todo-list"
-				tasks={tasks?.filter((task: Task) => task.status == 0)}
-				setErrorMessage={(message: string) => props.setErrorMessage(message)}
-				setShowError={(isShow: boolean) => props.setShowError(isShow)}
-				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
-			/>
-			<TaskStatus
-				token={props.token}
-				statusName="Pending"
-				statusClassName="pending"
-				tasks={tasks?.filter((task: Task) => task.status == 1)}
-				setErrorMessage={(message: string) => props.setErrorMessage(message)}
-				setShowError={(isShow: boolean) => props.setShowError(isShow)}
-				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
-			/>
-			<TaskStatus
-				token={props.token}
-				statusName="Done"
-				statusClassName="done"
-				tasks={tasks?.filter((task: Task) => task.status == 2)}
-				setErrorMessage={(message: string) => props.setErrorMessage(message)}
-				setShowError={(isShow: boolean) => props.setShowError(isShow)}
-				setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
-			/>
+			<DragDropContext onDragEnd={handleOnDragEnd}>
+				<TaskStatus
+					token={props.token}
+					statusName="To Do List"
+					status="todo"
+					statusClassName="todo-list"
+					tasks={handleSortByPosition(tasks?.filter((task: Task) => task.status == "todo"))}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+				/>
+				<TaskStatus
+					token={props.token}
+					statusName="Pending"
+					status="pending"
+					statusClassName="pending"
+					tasks={handleSortByPosition(tasks?.filter((task: Task) => task.status == "pending"))}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+				/>
+				<TaskStatus
+					token={props.token}
+					statusName="Done"
+					status="done"
+					statusClassName="done"
+					tasks={handleSortByPosition(tasks?.filter((task: Task) => task.status == "done"))}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+				/>
+			</DragDropContext>
 			{props.showModalCreateTask ? <ModalCreateTask close={() => props.closeModalCreateTask()} /> : ""}
 		</div>
 	);

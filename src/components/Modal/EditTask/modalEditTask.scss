@@ -38,6 +38,15 @@
 		}
 	}
 
+	&__input-taskName {
+		border: none;
+		outline: none;
+		font-size: 24px;
+		font-weight: 600;
+		background-color: transparent;
+		text-align: center;
+	}
+
 	&__info {
 		display: flex;
 		align-items: center;
@@ -89,7 +98,9 @@
 		}
 	}
 
-	&__new-subtask {
+	&__new-subtask,
+	&__delete-task,
+	&__rename-task {
 		background-color: $green;
 		color: white;
 		padding: 8px 16px;
@@ -104,6 +115,13 @@
 			background-color: $yellow;
 			color: $green;
 		}
+	}
+
+	&__modify {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 24px;
 	}
 
 	&__progress {

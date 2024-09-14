@@ -37,9 +37,11 @@ function ModalEditTask(props: any) {
 	const [subtasks, setSubtasks] = useState<SubTask[]>([]);
 	const [task, setTask] = useState<Task>();
 	const [creator, setCreator] = useState<User>();
+	const [taskName, setTaskName] = useState("");
+	const [enableEditTaskName, setEnableEditTaskName] = useState(false);
 
 	useEffect(() => {
-		handleGetSubTasks();
+		// handleGetSubTasks();
 		handleGetTask();
 		setCreator(props.creator);
 	}, []);
@@ -94,14 +96,6 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleCheckSubtask = async (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
-		// const updateSubTask = subtasks.map((subtask) => {
-		// 	if (subtask.id === id) {
-		// 		return { ...subtask, completed: event.target.checked };
-		// 	}
-		// 	return subtask;
-		// });
-		// setSubtasks(updateSubTask);
-
 		try {
 			const response = await axios.put(
 				`${process.env.REACT_APP_API_BASE_URL}/subtasks/updateSubtaskStatus`,
@@ -218,8 +212,6 @@ function ModalEditTask(props: any) {
 
 			const data = response.data;
 			if (data.status) {
-				console.log(data.result);
-
 				setSubtasks(data.result);
 				props.setLoading(false);
 			}
@@ -252,7 +244,76 @@ function ModalEditTask(props: any) {
 			if (data.status) {
 				setTask(data.result);
 				setDeadline(data.result.deadline);
+				setTaskName(data.result.name);
 				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleUpdateTaskName = async () => {
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/tasks/updateTaskName`,
+				{
+					id: props.taskId,
+					name: taskName,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				handleGetTask();
+				setEnableEditTaskName(false);
+				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setLoading(false);
+			props.setShowError(true);
+		}
+	};
+
+	const handleDeleteTask = async () => {
+		try {
+			const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/tasks/${props.taskId}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${props.token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				props.close();
+				props.handleGetTaskOfProject();
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -280,7 +341,8 @@ function ModalEditTask(props: any) {
 			<div className="modal-edit">
 				<div className="modal-edit__container">
 					<i className="fa-solid fa-xmark modal-edit__close" onClick={handleClose}></i>
-					<h2>{task?.name}</h2>
+					<input type="text" className="modal-edit__input-taskName" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+					{/* <h2>{task?.name}</h2> */}
 					<div className="modal-edit__info">
 						<div className="modal-edit__creator">
 							<img src={creator?.avatar} alt="avatar-creator" className="modal-edit__creator-avatar" />
@@ -302,6 +364,20 @@ function ModalEditTask(props: any) {
 						</div>
 						<button className="modal-edit__new-subtask" onClick={handleNewSubTask}>
 							New subtask
+						</button>
+					</div>
+					<div className="modal-edit__modify">
+						{!enableEditTaskName ? (
+							<button className="modal-edit__rename-task" onClick={() => setEnableEditTaskName(true)}>
+								Rename Task
+							</button>
+						) : (
+							<button className="modal-edit__rename-task" onClick={handleUpdateTaskName}>
+								Save Name Task
+							</button>
+						)}
+						<button className="modal-edit__delete-task" onClick={handleDeleteTask}>
+							Delete Task
 						</button>
 					</div>
 					<div className="modal-edit__progress">

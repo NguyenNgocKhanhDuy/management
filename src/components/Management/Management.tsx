@@ -70,49 +70,24 @@ function Management(props: any) {
 		if (source.index === destination.index && source.droppableId === destination.droppableId) return;
 
 		const updateTasks = [...tasks];
-		// if (source.droppableId === destination.droppableId) {
-		// 	const [removeTask] = updateTasks.filter((task) => task.id === draggableId);
-		// 	const afterRemove = updateTasks.filter((task) => task.id !== draggableId);
-		// 	const taskInStatus = afterRemove.filter((task) => task.status === destination.droppableId);
-		// 	console.log(taskInStatus);
-		// 	taskInStatus.splice(destination.index, 0, removeTask);
-		// 	updateTasks.map((task) => {
-		// 		taskInStatus.map((task2, index) => {
-		// 			if (task.id === task2.id) {
-		// 				task.position = index;
-		// 			}
-		// 		});
-		// 	});
-		// 	setTasks(updateTasks);
-		// 	console.log(updateTasks);
-		// } else {
-			// updateTasks.map((task) => {
-			// 	if (task.id === draggableId) {
-			// 		task.status = destination.droppableId;
-			// 		task.position = destination.index;
-			// 	}
-			// });
 
-			// setTasks(updateTasks);
-
-			const [removeTask] = updateTasks.filter((task) => task.id === draggableId);
-			const afterRemove = updateTasks.filter((task) => task.id !== draggableId);
-			const taskInStatus = afterRemove.filter((task) => task.status === destination.droppableId);
-			console.log(taskInStatus);
-			taskInStatus.splice(destination.index, 0, removeTask);
-			updateTasks.map((task) => {
-				taskInStatus.map((task2, index) => {
-					if (task.id === task2.id) {
-						if (task.id === draggableId) {
-							task.status = destination.droppableId;
-						}
-						task.position = index;
+		const [removeTask] = updateTasks.filter((task) => task.id === draggableId);
+		const afterRemove = updateTasks.filter((task) => task.id !== draggableId);
+		const taskInStatus = afterRemove.filter((task) => task.status === destination.droppableId);
+		console.log(taskInStatus);
+		taskInStatus.splice(destination.index, 0, removeTask);
+		updateTasks.map((task) => {
+			taskInStatus.map((task2, index) => {
+				if (task.id === task2.id) {
+					if (task.id === draggableId) {
+						task.status = destination.droppableId;
 					}
-				});
+					task.position = index;
+				}
 			});
-			setTasks(updateTasks);
-			console.log(updateTasks);
-		// }
+		});
+		setTasks(updateTasks);
+		console.log(updateTasks);
 
 		try {
 			const response = await axios.put(
@@ -161,6 +136,7 @@ function Management(props: any) {
 					setErrorMessage={(message: string) => props.setErrorMessage(message)}
 					setShowError={(isShow: boolean) => props.setShowError(isShow)}
 					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+					handleGetTaskOfProject={handleGetTaskOfProject}
 				/>
 				<TaskStatus
 					token={props.token}
@@ -171,6 +147,7 @@ function Management(props: any) {
 					setErrorMessage={(message: string) => props.setErrorMessage(message)}
 					setShowError={(isShow: boolean) => props.setShowError(isShow)}
 					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+					handleGetTaskOfProject={handleGetTaskOfProject}
 				/>
 				<TaskStatus
 					token={props.token}
@@ -181,9 +158,21 @@ function Management(props: any) {
 					setErrorMessage={(message: string) => props.setErrorMessage(message)}
 					setShowError={(isShow: boolean) => props.setShowError(isShow)}
 					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+					handleGetTaskOfProject={handleGetTaskOfProject}
 				/>
 			</DragDropContext>
-			{props.showModalCreateTask ? <ModalCreateTask close={() => props.closeModalCreateTask()} /> : ""}
+			{props.showModalCreateTask ? (
+				<ModalCreateTask
+					token={props.token}
+					close={() => props.closeModalCreateTask()}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+					handleGetTaskOfProject={handleGetTaskOfProject}
+				/>
+			) : (
+				""
+			)}
 		</div>
 	);
 }

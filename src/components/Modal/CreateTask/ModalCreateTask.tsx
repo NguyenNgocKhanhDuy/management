@@ -2,24 +2,52 @@ import React, { useRef, useState } from "react";
 import "./modalCreateTask.scss";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import { getProjectId } from "~/store/localStorage";
+import { formatToLocalDateTime } from "~/utils/date";
 
 function ModalCreateTask(props: any) {
-	const inputCategoryRef = useRef<HTMLInputElement>(null);
-	const categoryTestRef = useRef<HTMLDivElement>(null);
-	const selectColorRef = useRef<HTMLSelectElement>(null);
 	const [date, setDate] = useState<Date | null>(new Date());
+	const [taskName, setTaskName] = useState("");
 
-	const handleChangeCategoryTest = () => {
-		if (inputCategoryRef.current && categoryTestRef.current) {
-			var text = inputCategoryRef.current.value;
-			categoryTestRef.current.innerText = text.length > 0 ? text : "Category...";
-		}
-	};
+	const handleNewTask = async (event: any) => {
+		props.setLoading(true);
 
-	const handleSelectColor = (event: any) => {
-		if (selectColorRef.current && categoryTestRef.current) {
-			selectColorRef.current.style.backgroundColor = event.target.value;
-			categoryTestRef.current.style.backgroundColor = event.target.value;
+		try {
+			const response = await axios.post(
+				`${process.env.REACT_APP_API_BASE_URL}/tasks/addTask`,
+				{
+					name: taskName,
+					deadline: date ? formatToLocalDateTime(date) : formatToLocalDateTime(new Date()),
+					project: getProjectId(),
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				props.setLoading(false);
+				props.handleGetTaskOfProject();
+				props.close();
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				props.setErrorMessage(error.response.data.message);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -28,28 +56,15 @@ function ModalCreateTask(props: any) {
 			<div className="modal-container">
 				<i className="fa-solid fa-xmark close" onClick={() => props.close()}></i>
 				<h2 className="title">Create Task</h2>
-				{/* <div className="category">
-						<input type="text" className="category-name" placeholder="Category..." ref={inputCategoryRef} onInput={handleChangeCategoryTest} />
-						<select className="category-color" onChange={handleSelectColor} ref={selectColorRef}>
-							<option className="category-color-item" selected value="cornflowerblue"></option>
-							<option className="category-color-item" value="plum"></option>
-							<option className="category-color-item" value="orange"></option>
-							<option className="category-color-item" value="pink"></option>
-						</select>
-					</div> */}
-
-				{/* <div className="wrapper">
-						<div className="category-test" ref={categoryTestRef}>
-							Category...
-						</div>
-					</div> */}
+				<input type="text" className="titleInput" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
 				<div className="deadline">
-					<DatePicker selected={date} onChange={(date) => setDate(date)} showTimeSelect dateFormat="MMMM do YYYY, hh:mm:ss a" className="date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
+					<span>Deadline: </span>
+					<DatePicker selected={date} onChange={(date) => setDate(date)} showTimeSelect dateFormat="MMMM do YYYY, hh:mm" className="date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
 				</div>
 
-				<input type="text" className="titleInput" placeholder="Task..." />
-				<textarea className="desc" placeholder="Description..."></textarea>
-				<button className="btn">Create</button>
+				<button className="btn" onClick={handleNewTask}>
+					Create
+				</button>
 			</div>
 		</div>
 	);

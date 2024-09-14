@@ -17,6 +17,7 @@ interface User {
 function HomePage() {
 	const [showModalCreateTask, setShowModalCreateTask] = useState(false);
 	const [showModalNewProject, setShowModalNewProject] = useState(false);
+	const [showModalMembers, setShowModalMembers] = useState(false);
 	const [isManagement, setIsManagement] = useState(false);
 	const [isProject, setIsProject] = useState(true);
 	const token = getToken();
@@ -214,10 +215,15 @@ function HomePage() {
 						)}
 
 						<div className="more">
-							{/* <div className="filter box">
-								<i className="fa-solid fa-filter"></i>
-								<span>Filters</span>
-							</div> */}
+							{isManagement ? (
+								<div className="filter box" onClick={() => setShowModalMembers(true)}>
+									<i className="fa-solid fa-users"></i>
+									<span>Members</span>
+								</div>
+							) : (
+								""
+							)}
+
 							{isProject ? (
 								<div className="new box" onClick={() => setShowModalNewProject(true)}>
 									<i className="fa-solid fa-plus"></i>
@@ -239,6 +245,8 @@ function HomePage() {
 							setLoading={(isLoading: boolean) => setLoading(isLoading)}
 							showModalCreateTask={showModalCreateTask}
 							closeModalCreateTask={() => setShowModalCreateTask(false)}
+							showModalMembers={showModalMembers}
+							closeModalMembers={() => setShowModalMembers(false)}
 							isSelectProject={() => setIsSelectproject(true)}
 						/>
 					) : isProject ? (

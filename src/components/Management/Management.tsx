@@ -7,6 +7,7 @@ import { getProjectId } from "~/store/localStorage";
 import ModalCreateTask from "../Modal/CreateTask/ModalCreateTask";
 import Task from "../Task/Task";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import ModalMembers from "../Modal/Members/ModalMembers";
 
 interface Task {
 	creator: string;
@@ -165,6 +166,18 @@ function Management(props: any) {
 				<ModalCreateTask
 					token={props.token}
 					close={() => props.closeModalCreateTask()}
+					setErrorMessage={(message: string) => props.setErrorMessage(message)}
+					setShowError={(isShow: boolean) => props.setShowError(isShow)}
+					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
+					handleGetTaskOfProject={handleGetTaskOfProject}
+				/>
+			) : (
+				""
+			)}
+			{props.showModalMembers ? (
+				<ModalMembers
+					token={props.token}
+					close={() => props.closeModalMembers()}
 					setErrorMessage={(message: string) => props.setErrorMessage(message)}
 					setShowError={(isShow: boolean) => props.setShowError(isShow)}
 					setLoading={(isLoading: boolean) => props.setLoading(isLoading)}

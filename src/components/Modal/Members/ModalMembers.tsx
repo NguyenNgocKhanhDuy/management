@@ -27,6 +27,8 @@ function ModalMembers(props: any) {
 	const [confirmSelect, setConfirmSelect] = useState(false);
 	const [deleteId, setDeleteId] = useState("");
 	const projectId = getProjectId();
+	const [creator, setCreator] = useState<User>();
+	const [creatorId, setCreatorId] = useState("");
 
 	useEffect(() => {
 		handleGetProject();
@@ -35,6 +37,10 @@ function ModalMembers(props: any) {
 	useEffect(() => {
 		handleGetMembers();
 	}, [membersId]);
+
+	useEffect(() => {
+		handleGetCreator();
+	}, [creatorId]);
 
 	const handleOnChange = (event: any) => {
 		setValue(event.target.value);
@@ -86,16 +92,19 @@ function ModalMembers(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
+				props.setShowError(true);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
+				props.setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
+				props.setShowError(true);
 			}
-			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -111,14 +120,15 @@ function ModalMembers(props: any) {
 
 			const data = response.data;
 			if (data.status) {
+				setCreatorId(data.result.creator);
 				setMembersId(data.result.members);
 				setPendingId(data.result.pending);
 				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 				props.setShowError(true);
 			} else if (error.request) {
 				console.error("Error:", error.request);
@@ -134,6 +144,7 @@ function ModalMembers(props: any) {
 	};
 
 	const handleGetUser = async (id: string) => {
+		console.log(id);
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/${id}`, {
 				headers: {
@@ -148,19 +159,26 @@ function ModalMembers(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
-				props.setShowError(true);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
-				props.setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
-				props.setShowError(true);
 			}
+			props.setShowError(true);
 			props.setLoading(false);
+		}
+	};
+
+	const handleGetCreator = async () => {
+		if (creatorId) {
+			console.log(creatorId);
+			const creatorPromise = handleGetUser(creatorId);
+			const creatorUser = await creatorPromise;
+			setCreator(creatorUser);
 		}
 	};
 
@@ -169,11 +187,15 @@ function ModalMembers(props: any) {
 		if (membersId) {
 			const memberPromise = membersId.map((id: string) => handleGetUser(id));
 			const allMembers = await Promise.all(memberPromise);
-			const pendingPromise = pendingId.map((id: string) => handleGetUser(id));
-			const allPending = await Promise.all(pendingPromise);
-			const combinedMembers = [...allMembers, ...allPending];
+			if (pendingId) {
+				const pendingPromise = pendingId.map((id: string) => handleGetUser(id));
+				const allPending = await Promise.all(pendingPromise);
+				const combinedMembers = [...allMembers, ...allPending];
+				setMembers(combinedMembers);
+			} else {
+				setMembers(allMembers);
+			}
 
-			setMembers(combinedMembers);
 			props.setLoading(false);
 		} else {
 			props.setLoading(false);
@@ -220,8 +242,8 @@ function ModalMembers(props: any) {
 				}
 			} catch (error: any) {
 				if (error.response) {
-					console.error("Error:", error.response.data.message);
-					props.setErrorMessage("Error " + error.response.data.message);
+					console.error("Error:", error.response.data.message || error.response.data.error);
+					props.setErrorMessage(error.response.data.message || error.response.data.error);
 					props.setShowError(true);
 				} else if (error.request) {
 					console.error("Error:", error.request);
@@ -257,8 +279,8 @@ function ModalMembers(props: any) {
 				}
 			} catch (error: any) {
 				if (error.response) {
-					console.error("Error:", error.response.data.message);
-					props.setErrorMessage("Error " + error.response.data.message);
+					console.error("Error:", error.response.data.message || error.response.data.error);
+					props.setErrorMessage(error.response.data.message || error.response.data.error);
 					props.setShowError(true);
 				} else if (error.request) {
 					console.error("Error:", error.request);
@@ -300,7 +322,19 @@ function ModalMembers(props: any) {
 						</div>
 					</div>
 				</div>
-				<span className="modal__members-your">Your Members</span>
+				<span className="modal__members-creator">Creator</span>
+				<div className="modal__members-creatorWrap">
+					<div className="modal__members-item">
+						<div className="modal__members-item-info">
+							<img src={creator?.avatar} alt="" className="modal__members-item-avatar" />
+							<div className="modal__members-item-nameEmail">
+								<span className="modal__members-item-name">{creator?.username}</span>
+								<span className="modal__members-item-email">{creator?.email}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<span className="modal__members-your">Members</span>
 				<div className="modal__members-list">
 					{members?.map((member) => (
 						<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirmDelete(member.id)}>
@@ -311,7 +345,7 @@ function ModalMembers(props: any) {
 									<span className="modal__members-item-email">{member.email}</span>
 								</div>
 							</div>
-							{pendingId.some((id: string) => id === member.id) ? <span className="modal__members-item-pending">Pending</span> : ""}
+							{pendingId && pendingId.some((id: string) => id === member.id) ? <span className="modal__members-item-pending">Pending</span> : ""}
 							<i className="fa-solid fa-trash modal__members-item-remove" />
 						</div>
 					))}

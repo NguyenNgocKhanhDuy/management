@@ -75,6 +75,7 @@
 			right: 0;
 			top: 100%;
 			height: 340px;
+			z-index: 99;
 
 			&-name {
 				display: flex;
@@ -88,6 +89,7 @@
 				background-color: $background;
 				max-height: 60%;
 				min-height: 45px;
+
 				@include border(1, 1, 1, 1);
 				border-color: $green;
 			}
@@ -140,18 +142,25 @@
 		}
 	}
 
+	&-creator,
 	&-your {
 		display: block;
 		text-align: left;
-		margin-top: 70px;
+		// margin-top: 70px;
 		margin-bottom: 12px;
 	}
 
+	&-creatorWrap,
 	&-list {
-		height: 50%;
+		height: calc(50% - 32px);
 		overflow-y: auto;
 		margin-bottom: 30px;
 	}
+
+	&-creatorWrap {
+		height: auto;
+	}
+
 	&-item {
 		position: relative;
 		display: flex;

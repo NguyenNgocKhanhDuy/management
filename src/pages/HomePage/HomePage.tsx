@@ -69,18 +69,16 @@ function HomePage() {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				setErrorMessage(error.response.data.message);
-				setShowError(true);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				setErrorMessage("Failed to connect to server.");
-				setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				setErrorMessage("An unexpected error occurred: " + error.message);
-				setShowError(true);
 			}
+			setShowError(true);
 			setLoading(false);
 		}
 	};
@@ -108,18 +106,16 @@ function HomePage() {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				setErrorMessage(error.response.data.message);
-				setShowError(true);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				setErrorMessage("Failed to connect to server.");
-				setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				setErrorMessage("An unexpected error occurred: " + error.message);
-				setShowError(true);
 			}
+			setShowError(true);
 			setLoading(false);
 		}
 	};
@@ -143,8 +139,8 @@ function HomePage() {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				setErrorMessage("Failed to connect to server.");
@@ -196,18 +192,16 @@ function HomePage() {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				setErrorMessage(error.response.data.message);
-				setShowError(true);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				setErrorMessage("Failed to connect to server.");
-				setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				setErrorMessage("An unexpected error occurred: " + error.message);
-				setShowError(true);
 			}
+			setShowError(true);
 			setLoading(false);
 		}
 	};

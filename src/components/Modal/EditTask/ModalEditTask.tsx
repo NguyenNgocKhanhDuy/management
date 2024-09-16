@@ -84,14 +84,17 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
 			} else {
 				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -117,14 +120,17 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
 			} else {
 				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -156,14 +162,17 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
 			} else {
 				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -190,14 +199,17 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
 			} else {
 				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -217,8 +229,8 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
@@ -226,8 +238,8 @@ function ModalEditTask(props: any) {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -249,8 +261,8 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
@@ -258,8 +270,8 @@ function ModalEditTask(props: any) {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -287,8 +299,8 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
@@ -296,8 +308,8 @@ function ModalEditTask(props: any) {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -317,8 +329,8 @@ function ModalEditTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
@@ -326,8 +338,8 @@ function ModalEditTask(props: any) {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
 			}
-			props.setLoading(false);
 			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 

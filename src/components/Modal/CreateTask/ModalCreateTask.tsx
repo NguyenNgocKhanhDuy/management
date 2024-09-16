@@ -37,8 +37,8 @@ function ModalCreateTask(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");

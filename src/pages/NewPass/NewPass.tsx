@@ -55,8 +55,8 @@ function NewPass() {
 				}
 			} catch (error: any) {
 				if (error.response) {
-					console.error("Error:", error.response.data.message);
-					setErrorMessage(error.response.data.message);
+					console.error("Error:", error.response.data.message || error.response.data.error);
+					setErrorMessage(error.response.data.message || error.response.data.error);
 				} else if (error.request) {
 					setErrorMessage("Failed to connect to server.");
 				} else {

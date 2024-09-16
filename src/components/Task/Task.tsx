@@ -36,18 +36,16 @@ function Task(props: any) {
 			}
 		} catch (error: any) {
 			if (error.response) {
-				console.error("Error:", error.response.data.message);
-				props.setErrorMessage(error.response.data.message);
-				props.setShowError(true);
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
 			} else if (error.request) {
 				console.error("Error:", error.request);
 				props.setErrorMessage("Failed to connect to server.");
-				props.setShowError(true);
 			} else {
 				console.error("Error:", error.message);
 				props.setErrorMessage("An unexpected error occurred: " + error.message);
-				props.setShowError(true);
 			}
+			props.setShowError(true);
 			props.setLoading(false);
 		}
 	};

@@ -26,6 +26,7 @@ function ModalMembers(props: any) {
 	const [confirmMessage, setConfirmMessage] = useState("");
 	const [confirmSelect, setConfirmSelect] = useState(false);
 	const [deleteId, setDeleteId] = useState("");
+	const [addMemId, setAddMemId] = useState("");
 	const projectId = getProjectId();
 	const [creator, setCreator] = useState<User>();
 	const [creatorId, setCreatorId] = useState("");
@@ -204,15 +205,26 @@ function ModalMembers(props: any) {
 	};
 
 	useEffect(() => {
-		if (confirmSelect) {
+		console.log("0");
+
+		if (confirmSelect && deleteId != "") {
 			handleDeleteMembers(deleteId);
+		}
+		if (confirmSelect && addMemId != "") {
+			handleAddMember(addMemId);
 		}
 	}, [confirmSelect]);
 
-	const handleSetShowConfirmDelete = (id: string) => {
-		setDeleteId(id);
-		setConfirmMessage("Do you want to delete?");
-		setShowModalConfirm(true);
+	const handleSetShowConfirm = (id: string, type: string) => {
+		if (type === "delete") {
+			setDeleteId(id);
+			setConfirmMessage("Do you want to delete?");
+			setShowModalConfirm(true);
+		} else if (type === "add") {
+			setAddMemId(id);
+			setConfirmMessage("Do you want to add this user to your project?");
+			setShowModalConfirm(true);
+		}
 	};
 
 	const handleDeleteMembers = async (idMem: string) => {
@@ -237,6 +249,7 @@ function ModalMembers(props: any) {
 				);
 				const data = response.data;
 				if (data.status) {
+					setDeleteId("");
 					handleGetProject();
 					props.setLoading(false);
 				}
@@ -296,6 +309,47 @@ function ModalMembers(props: any) {
 		}
 	};
 
+	const handleAddMember = async (idMem: string) => {
+		props.setLoading(true);
+		const updatePending = [...pendingId, idMem];
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/projects/addMemberPending`,
+				{
+					id: projectId,
+					pending: updatePending,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+			const data = response.data;
+			if (data.status) {
+				setAddMemId("");
+				handleGetProject();
+				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
+				props.setShowError(true);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+				props.setShowError(true);
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+				props.setShowError(true);
+			}
+			props.setLoading(false);
+		}
+	};
+
 	return (
 		<div className="modal__members">
 			<div className="modal__members-container">
@@ -308,7 +362,7 @@ function ModalMembers(props: any) {
 					<div className="modal__members-search-result modal__members-search-result--hide" ref={resultSearchRef}>
 						<div className="modal__members-search-result-list">
 							{users?.map((user: User) => (
-								<div className="modal__members-search-result-item" key={user.id}>
+								<div className="modal__members-search-result-item" key={user.id} onClick={() => handleSetShowConfirm(user.id, "add")}>
 									<div className="modal__members-search-result-item-info">
 										<img src={user?.avatar} alt="" className="modal__members-search-result-item-avatar" />
 										<div className="modal__members-search-result-name">
@@ -337,7 +391,7 @@ function ModalMembers(props: any) {
 				<span className="modal__members-your">Members</span>
 				<div className="modal__members-list">
 					{members?.map((member) => (
-						<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirmDelete(member.id)}>
+						<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirm(member.id, "delete")}>
 							<div className="modal__members-item-info">
 								<img src={member.avatar} alt="" className="modal__members-item-avatar" />
 								<div className="modal__members-item-nameEmail">

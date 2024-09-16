@@ -6,8 +6,9 @@ import Project from "~/components/Project/Project";
 import axios from "axios";
 import ModalError from "~/components/Modal/Error/ModalError";
 import Loading from "~/components/Loading/Loading";
-import { formatDateFull } from "~/utils/date";
-import { getProjectId, getToken } from "~/store/localStorage";
+import { dateShort, formatDateFull, formatMonth } from "~/utils/date";
+import { getProjectId, getToken, removeProjectId } from "~/store/localStorage";
+import ModalConfirm from "~/components/Modal/Confirm/ModalConfirm";
 
 interface User {
 	email: string;
@@ -28,6 +29,9 @@ function HomePage() {
 	const [projectName, setProjectName] = useState("Project Name");
 	const [isSelectproject, setIsSelectproject] = useState(false);
 	const [editProjectName, setEditProjectName] = useState(false);
+	const [showModalConfirm, setShowModalConfirm] = useState(false);
+	const [confirmMessage, setConfirmMessage] = useState("");
+	const [confirmSelect, setConfirmSelect] = useState(false);
 
 	useEffect(() => {
 		handleGetUser();
@@ -163,6 +167,51 @@ function HomePage() {
 		}
 	};
 
+	useEffect(() => {
+		if (confirmSelect) {
+			handleDeleteProject();
+		}
+	}, [confirmSelect]);
+
+	const handleSetShowConfirm = () => {
+		setConfirmMessage("Do you want to delete?");
+		setShowModalConfirm(true);
+	};
+
+	const handleDeleteProject = async () => {
+		try {
+			const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/projects/${getProjectId()}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				setLoading(false);
+				setIsManagement(false);
+				setIsProject(true);
+				removeProjectId();
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message);
+				setErrorMessage(error.response.data.message);
+				setShowError(true);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				setErrorMessage("Failed to connect to server.");
+				setShowError(true);
+			} else {
+				console.error("Error:", error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+				setShowError(true);
+			}
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div className="container">
 			<div className="sidebar">
@@ -201,13 +250,21 @@ function HomePage() {
 				<div className="content">
 					<div className="content-top">
 						<div className="date">
-							<span className="today">{formatDateFull(new Date())}</span>
-							{/* <span className="month">{formatMonth(new Date())}</span> */}
+							{isProject ? (
+								<div className="today">{formatDateFull(new Date())}</div>
+							) : (
+								<div className="date-wrap">
+									<div className="today">{dateShort(new Date())}</div>
+									<div className="new box" onClick={handleSetShowConfirm}>
+										<i className="fa-solid fa-minus"></i>
+										<span>DeleteProject</span>
+									</div>
+								</div>
+							)}
 						</div>
 						{isManagement ? (
 							<div className="project">
 								<input type="text" className="project-name-input" value={projectName} readOnly={!editProjectName} onChange={(e) => setProjectName(e.target.value)} />
-								{/* <span>{projectName}</span> */}
 								<span className="project-name-edit">{editProjectName ? <i className="fa-solid fa-check" onClick={handleUpdateProjectName}></i> : <i className="fa-solid fa-pen-to-square" onClick={handleChangeToEdit}></i>}</span>
 							</div>
 						) : (
@@ -268,6 +325,7 @@ function HomePage() {
 			</div>
 			{loading ? <Loading loading={loading} /> : ""}
 			{showError ? <ModalError close={() => setShowError(false)} isSelectProject={isSelectproject} errorMessage={errorMessage} hide={() => setIsManagement(false)} showProject={() => setIsProject(true)} /> : ""}
+			{showModalConfirm ? <ModalConfirm close={() => setShowModalConfirm(false)} message={confirmMessage} setConfirmSelect={(select: boolean) => setConfirmSelect(select)} /> : ""}
 		</div>
 	);
 }

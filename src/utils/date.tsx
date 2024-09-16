@@ -10,6 +10,10 @@ export function formatDateFull(today: Date) {
 	return `Today is ${dayOfWeek}, ${month} ${day}${suffix}, ${year}`;
 }
 
+export function dateShort(today: Date) {
+	return formatMonth(today) + " " + today.getDate() + ", " + today.getFullYear();
+}
+
 export function formatMonth(today: Date) {
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	const month = months[today.getMonth()];

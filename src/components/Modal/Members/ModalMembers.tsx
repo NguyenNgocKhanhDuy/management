@@ -4,6 +4,7 @@ import axios from "axios";
 import blackImg from "~/assets/img/black.jpg";
 import debounce from "lodash.debounce";
 import { getProjectId } from "~/store/localStorage";
+import ModalConfirm from "../Confirm/ModalConfirm";
 
 interface User {
 	id: string;
@@ -21,6 +22,11 @@ function ModalMembers(props: any) {
 	const [members, setMembers] = useState<User[]>([]);
 	const [membersId, setMembersId] = useState<string[]>([]);
 	const [pendingId, setPendingId] = useState<string[]>([]);
+	const [showModalConfirm, setShowModalConfirm] = useState(false);
+	const [confirmMessage, setConfirmMessage] = useState("");
+	const [confirmSelect, setConfirmSelect] = useState(false);
+	const [deleteId, setDeleteId] = useState("");
+	const projectId = getProjectId();
 
 	useEffect(() => {
 		handleGetProject();
@@ -61,7 +67,7 @@ function ModalMembers(props: any) {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/searchNotInProject`, {
 				params: {
 					email: email,
-					idProject: getProjectId(),
+					idProject: projectId,
 				},
 
 				headers: {
@@ -96,7 +102,7 @@ function ModalMembers(props: any) {
 	const handleGetProject = async () => {
 		props.setLoading(true);
 		try {
-			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/${getProjectId()}`, {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/${projectId}`, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${props.token}`,
@@ -175,6 +181,99 @@ function ModalMembers(props: any) {
 		}
 	};
 
+	useEffect(() => {
+		if (confirmSelect) {
+			handleDeleteMembers(deleteId);
+		}
+	}, [confirmSelect]);
+
+	const handleSetShowConfirmDelete = (id: string) => {
+		setDeleteId(id);
+		setConfirmMessage("Do you want to delete?");
+		setShowModalConfirm(true);
+	};
+
+	const handleDeleteMembers = async (idMem: string) => {
+		props.setLoading(true);
+		const isMember = membersId.some((id: string) => id === idMem);
+		const isPending = pendingId.some((id: string) => id === idMem);
+		if (isMember) {
+			const updateMembersId = membersId.filter((id: string) => id !== idMem);
+			try {
+				const response = await axios.put(
+					`${process.env.REACT_APP_API_BASE_URL}/projects/updateMembers`,
+					{
+						id: projectId,
+						members: updateMembersId,
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${props.token}`,
+						},
+					}
+				);
+				const data = response.data;
+				if (data.status) {
+					handleGetProject();
+					props.setLoading(false);
+				}
+			} catch (error: any) {
+				if (error.response) {
+					console.error("Error:", error.response.data.message);
+					props.setErrorMessage("Error " + error.response.data.message);
+					props.setShowError(true);
+				} else if (error.request) {
+					console.error("Error:", error.request);
+					props.setErrorMessage("Failed to connect to server.");
+					props.setShowError(true);
+				} else {
+					console.error("Error:", error.message);
+					props.setErrorMessage("An unexpected error occurred: " + error.message);
+					props.setShowError(true);
+				}
+				props.setLoading(false);
+			}
+		} else if (isPending) {
+			const updatePending = pendingId.filter((id: string) => id !== idMem);
+			try {
+				const response = await axios.put(
+					`${process.env.REACT_APP_API_BASE_URL}/projects/updatePending`,
+					{
+						id: projectId,
+						pending: updatePending,
+					},
+					{
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${props.token}`,
+						},
+					}
+				);
+				const data = response.data;
+				if (data.status) {
+					handleGetProject();
+					props.setLoading(false);
+				}
+			} catch (error: any) {
+				if (error.response) {
+					console.error("Error:", error.response.data.message);
+					props.setErrorMessage("Error " + error.response.data.message);
+					props.setShowError(true);
+				} else if (error.request) {
+					console.error("Error:", error.request);
+					props.setErrorMessage("Failed to connect to server.");
+					props.setShowError(true);
+				} else {
+					console.error("Error:", error.message);
+					props.setErrorMessage("An unexpected error occurred: " + error.message);
+					props.setShowError(true);
+				}
+				props.setLoading(false);
+			}
+		}
+	};
+
 	return (
 		<div className="modal__members">
 			<div className="modal__members-container">
@@ -186,12 +285,6 @@ function ModalMembers(props: any) {
 					</div>
 					<div className="modal__members-search-result modal__members-search-result--hide" ref={resultSearchRef}>
 						<div className="modal__members-search-result-list">
-							{/* {users.length === 0 ? (
-								<div className="modal__members-search-result-noResult">
-									<span>No user found</span>
-								</div>
-							) : (
-							)} */}
 							{users?.map((user: User) => (
 								<div className="modal__members-search-result-item" key={user.id}>
 									<div className="modal__members-search-result-item-info">
@@ -210,7 +303,7 @@ function ModalMembers(props: any) {
 				<span className="modal__members-your">Your Members</span>
 				<div className="modal__members-list">
 					{members?.map((member) => (
-						<div className="modal__members-item" key={member.id}>
+						<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirmDelete(member.id)}>
 							<div className="modal__members-item-info">
 								<img src={member.avatar} alt="" className="modal__members-item-avatar" />
 								<div className="modal__members-item-nameEmail">
@@ -218,12 +311,13 @@ function ModalMembers(props: any) {
 									<span className="modal__members-item-email">{member.email}</span>
 								</div>
 							</div>
-							{pendingId.some((id: string) => id === member.id) ? <span>pending</span> : ""}
+							{pendingId.some((id: string) => id === member.id) ? <span className="modal__members-item-pending">Pending</span> : ""}
 							<i className="fa-solid fa-trash modal__members-item-remove" />
 						</div>
 					))}
 				</div>
 			</div>
+			{showModalConfirm ? <ModalConfirm close={() => setShowModalConfirm(false)} message={confirmMessage} setConfirmSelect={(select: boolean) => setConfirmSelect(select)} /> : ""}
 		</div>
 	);
 }

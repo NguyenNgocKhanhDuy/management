@@ -153,6 +153,7 @@
 		margin-bottom: 30px;
 	}
 	&-item {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -192,6 +193,11 @@
 			height: 30px;
 			border-radius: 50%;
 			@include border(2, 2, 2, 2);
+		}
+
+		&-pending {
+			position: absolute;
+			right: 10%;
 		}
 	}
 }

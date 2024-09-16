@@ -19,6 +19,8 @@ function TaskStatus(props: any) {
 								setShowError={(isShow: boolean) => props.setShowError(isShow)}
 								setLoading={(isLoading: boolean) => props.setLoading(isLoading)}
 								handleGetTaskOfProject={() => props.handleGetTaskOfProject()}
+								confirmSelect={props.confirmSelect}
+								setConfirmSelect={(select: boolean) => props.setConfirmSelect(select)}
 							/>
 						))}
 					</div>

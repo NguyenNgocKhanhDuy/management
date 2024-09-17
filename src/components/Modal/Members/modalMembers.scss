@@ -19,6 +19,7 @@
 		background-color: $background;
 		overflow: hidden;
 		padding: 60px;
+		padding-top: 40px;
 		border-radius: 4px;
 		@include border(1, 1, 1, 1);
 	}

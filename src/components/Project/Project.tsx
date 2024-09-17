@@ -51,6 +51,8 @@ function Project(props: any) {
 		}
 	};
 
+	
+
 	return (
 		<div className="project">
 			<div className="project__list">

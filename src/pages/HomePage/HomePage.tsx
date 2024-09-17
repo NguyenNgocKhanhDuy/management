@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import blackImg from "~/assets/img/black.jpg";
 import "./homePage.scss";
 import Management from "~/components/Management/Management";
@@ -9,10 +9,20 @@ import Loading from "~/components/Loading/Loading";
 import { dateShort, formatDateFull, formatMonth } from "~/utils/date";
 import { getProjectId, getToken, removeProjectId } from "~/store/localStorage";
 import ModalConfirm from "~/components/Modal/Confirm/ModalConfirm";
+import debounce from "lodash.debounce";
 
 interface User {
+	id: string;
 	email: string;
 	username: string;
+	avatar: string;
+}
+
+interface Project {
+	id: string;
+	name: string;
+	creator: string;
+	date: string;
 }
 
 function HomePage() {
@@ -32,6 +42,12 @@ function HomePage() {
 	const [showModalConfirm, setShowModalConfirm] = useState(false);
 	const [confirmMessage, setConfirmMessage] = useState("");
 	const [confirmSelect, setConfirmSelect] = useState(false);
+	const [searchValue, setSearchValue] = useState("");
+	const debouncedSearchRef = useRef<any>();
+	const resultSearchRef = useRef<HTMLDivElement>(null);
+	const [projectSearch, setProjectSearch] = useState<Project[]>([]);
+	const [creators, setCreators] = useState<User[]>([]);
+	const [creatorsId, setCreatorsId] = useState<string[]>([]);
 
 	useEffect(() => {
 		handleGetUser();
@@ -206,8 +222,109 @@ function HomePage() {
 		}
 	};
 
+	const handleSearchProject = async (text: string) => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/search`, {
+				params: {
+					projectName: text,
+				},
+
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				setProjectSearch(data.result);
+				const creatorList = data.result.map((p: Project) => p.creator);
+				setCreatorsId(creatorList);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			setShowError(true);
+		}
+	};
+
+	useEffect(() => {
+		handleGetCreator();
+	}, [creatorsId]);
+
+	const handleOnChangeSearch = (event: any) => {
+		setSearchValue(event.target.value);
+		if (event.target.value.length > 0) {
+			handleShowResultSearch(true);
+			debouncedSearchRef.current(event.target.value);
+		} else {
+			handleShowResultSearch(false);
+		}
+	};
+
+	const handleShowResultSearch = (show: boolean) => {
+		if (resultSearchRef) {
+			if (show) {
+				resultSearchRef.current?.classList.remove("modal__members-search-result--hide");
+			} else {
+				resultSearchRef.current?.classList.add("modal__members-search-result--hide");
+			}
+		}
+	};
+
+	if (!debouncedSearchRef.current) {
+		debouncedSearchRef.current = debounce((nextValue: string) => {
+			handleSearchProject(nextValue);
+		}, 300);
+	}
+
+	const handleGetCreator = async () => {
+		if (creatorsId) {
+			const creatorPromise = creatorsId.map((id: string) => handleGetUserById(id));
+			const allCreators = await Promise.all(creatorPromise);
+			setCreators(allCreators);
+		}
+	};
+
+	const handleGetUserById = async (id: string) => {
+		try {
+			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/${id}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const data = response.data;
+			if (data.status) {
+				return data.result;
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				setErrorMessage(error.response.data.message || error.response.data.error);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			setShowError(true);
+			setLoading(false);
+		}
+	};
+
 	return (
-		<div className="container">
+		<div className="container" onClick={() => handleShowResultSearch(false)}>
 			<div className="sidebar">
 				<h2 className="title">Management</h2>
 				<div className={(isProject ? "isItemSelected" : "") + " item"} onClick={() => handleChangeToProject(true)}>
@@ -234,7 +351,26 @@ function HomePage() {
 					</div>
 					<div className="search">
 						<i className="fa-solid fa-magnifying-glass"></i>
-						<input type="text" className="searchInput" placeholder="Search here..." />
+						<input type="text" className="searchInput" placeholder="Project name..." value={searchValue} onChange={(e) => handleOnChangeSearch(e)} />
+						<div className=" search__result" ref={resultSearchRef}>
+							<div className="search__result-list">
+								{creators &&
+									projectSearch?.map((project: Project) => (
+										<div className="search__result-item" key={project.id}>
+											<div className="search__result-info">
+												<span className="search__result-name">{project.name}</span>
+												<div className="search__result-creator">
+													<img className="search__result-creator-avatar" src={creators.find((creator) => creator.id === project.creator)?.avatar} alt="" />
+													<span className="search__result-creator-name">{creators.find((creator) => creator.id === project.creator)?.username}</span>
+												</div>
+											</div>
+											<div className="search__result-date">
+												<span>{dateShort(new Date(project.date))}</span>
+											</div>
+										</div>
+									))}
+							</div>
+						</div>
 					</div>
 					<div className="notice">
 						<i className="fa-regular fa-bell"></i>

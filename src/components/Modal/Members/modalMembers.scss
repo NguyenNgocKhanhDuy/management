@@ -42,12 +42,54 @@
 		text-transform: uppercase;
 	}
 
+	&-menu {
+		display: flex;
+		align-items: center;
+		height: 40px;
+		margin-bottom: 20px;
+		border-bottom: 2px solid black;
+	}
+
+	&-section {
+		width: 50%;
+		height: 100%;
+		font-size: 16px;
+		display: flex;
+		font-weight: 600;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.25s linear;
+
+		&:hover {
+			background-color: $green;
+			color: $yellow;
+		}
+
+		&:first-child {
+			border-right: 1px solid black;
+		}
+
+		&:last-child {
+			border-left: 1px solid black;
+		}
+
+		&--active {
+			background-color: $green;
+			color: $yellow;
+		}
+		
+	}
+
+
+
 	&-holder {
 		width: 100%;
 		margin: 12px 0;
 		border-radius: 4px;
 		display: flex;
 		align-items: center;
+		margin-bottom: 60px;
 		padding: 6px 12px;
 		@include border(1, 1, 1, 1);
 		transition: all 0.25s linear;
@@ -73,7 +115,7 @@
 			position: absolute;
 			left: 0;
 			right: 0;
-			top: 100%;
+			top: 40px;
 			height: 340px;
 			z-index: 99;
 

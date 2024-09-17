@@ -22,6 +22,7 @@ function ModalMembers(props: any) {
 	const [members, setMembers] = useState<User[]>([]);
 	const [membersId, setMembersId] = useState<string[]>([]);
 	const [pendingId, setPendingId] = useState<string[]>([]);
+	const [pendings, setPendings] = useState<User[]>([]);
 	const [showModalConfirm, setShowModalConfirm] = useState(false);
 	const [confirmMessage, setConfirmMessage] = useState("");
 	const [confirmSelect, setConfirmSelect] = useState(false);
@@ -30,6 +31,7 @@ function ModalMembers(props: any) {
 	const projectId = getProjectId();
 	const [creator, setCreator] = useState<User>();
 	const [creatorId, setCreatorId] = useState("");
+	const [isAddMem, setIsAddMem] = useState(false);
 
 	useEffect(() => {
 		handleGetProject();
@@ -38,6 +40,10 @@ function ModalMembers(props: any) {
 	useEffect(() => {
 		handleGetMembers();
 	}, [membersId]);
+
+	useEffect(() => {
+		handleGetPending();
+	}, [pendingId]);
 
 	useEffect(() => {
 		handleGetCreator();
@@ -188,20 +194,19 @@ function ModalMembers(props: any) {
 		if (membersId) {
 			const memberPromise = membersId.map((id: string) => handleGetUser(id));
 			const allMembers = await Promise.all(memberPromise);
-			if (pendingId) {
-				const pendingPromise = pendingId.map((id: string) => handleGetUser(id));
-				const allPending = await Promise.all(pendingPromise);
-				const combinedMembers = [...allMembers, ...allPending];
-				setMembers(combinedMembers);
-			} else {
-				setMembers(allMembers);
-			}
-
-			props.setLoading(false);
-		} else {
-			props.setLoading(false);
-			return;
+			setMembers(allMembers);
 		}
+		props.setLoading(false);
+	};
+
+	const handleGetPending = async () => {
+		props.setLoading(true);
+		if (pendingId) {
+			const pendingPromise = pendingId.map((id: string) => handleGetUser(id));
+			const allPending = await Promise.all(pendingPromise);
+			setPendings(allPending);
+		}
+		props.setLoading(false);
 	};
 
 	useEffect(() => {
@@ -355,55 +360,84 @@ function ModalMembers(props: any) {
 			<div className="modal__members-container">
 				<i className="fa-solid fa-xmark modal__members-close" onClick={() => props.close()}></i>
 				<h2 className="modal__members-title">Members</h2>
-				<div className="modal__members-search">
-					<div className="modal__members-holder">
-						<input type="text" name="project" placeholder="Enter email" value={value} className="modal__members-input" onChange={(e) => handleOnChange(e)} />
+				<div className="modal__members-menu">
+					<div className={(isAddMem ? "" : "modal__members-section--active") + " modal__members-section"} onClick={() => setIsAddMem(false)}>
+						<span className="modal__members-section-text">Your project</span>
 					</div>
-					<div className="modal__members-search-result modal__members-search-result--hide" ref={resultSearchRef}>
-						<div className="modal__members-search-result-list">
-							{users?.map((user: User) => (
-								<div className="modal__members-search-result-item" key={user.id} onClick={() => handleSetShowConfirm(user.id, "add")}>
-									<div className="modal__members-search-result-item-info">
-										<img src={user?.avatar} alt="" className="modal__members-search-result-item-avatar" />
-										<div className="modal__members-search-result-name">
-											<span className="modal__members-item-name">{user.username}</span>
-											<span className="modal__members-item-name">{user.email}</span>
+					<div className={(isAddMem ? "modal__members-section--active" : "") + " modal__members-section"} onClick={() => setIsAddMem(true)}>
+						<span className="modal__members-section-text">Add New Member</span>
+					</div>
+				</div>
+				{isAddMem ? (
+					<div className="modal__members-search">
+						<div className="modal__members-holder">
+							<input type="text" name="project" placeholder="Enter email" value={value} className="modal__members-input" onChange={(e) => handleOnChange(e)} />
+						</div>
+						<div className="modal__members-search-result modal__members-search-result--hide" ref={resultSearchRef}>
+							<div className="modal__members-search-result-list">
+								{users?.map((user: User) => (
+									<div className="modal__members-search-result-item" key={user.id} onClick={() => handleSetShowConfirm(user.id, "add")}>
+										<div className="modal__members-search-result-item-info">
+											<img src={user?.avatar} alt="" className="modal__members-search-result-item-avatar" />
+											<div className="modal__members-search-result-name">
+												<span className="modal__members-item-name">{user.username}</span>
+												<span className="modal__members-item-name">{user.email}</span>
+											</div>
+										</div>
+										<i className="fa-solid fa-plus modal__members-item-add"></i>
+									</div>
+								))}
+							</div>
+						</div>
+						<span className="modal__members-your">Pending</span>
+						<div className="modal__members-list">
+							{pendings?.map((pending) => (
+								<div className="modal__members-item" key={pending.id} onClick={() => handleSetShowConfirm(pending.id, "delete")}>
+									<div className="modal__members-item-info">
+										<img src={pending.avatar} alt="" className="modal__members-item-avatar" />
+										<div className="modal__members-item-nameEmail">
+											<span className="modal__members-item-name">{pending.username}</span>
+											<span className="modal__members-item-email">{pending.email}</span>
 										</div>
 									</div>
-									<i className="fa-solid fa-plus modal__members-item-add"></i>
+									<span className="modal__members-item-pending">Pending</span>
+									<i className="fa-solid fa-trash modal__members-item-remove" />
 								</div>
 							))}
 						</div>
 					</div>
-				</div>
-				<span className="modal__members-creator">Creator</span>
-				<div className="modal__members-creatorWrap">
-					<div className="modal__members-item">
-						<div className="modal__members-item-info">
-							<img src={creator?.avatar} alt="" className="modal__members-item-avatar" />
-							<div className="modal__members-item-nameEmail">
-								<span className="modal__members-item-name">{creator?.username}</span>
-								<span className="modal__members-item-email">{creator?.email}</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<span className="modal__members-your">Members</span>
-				<div className="modal__members-list">
-					{members?.map((member) => (
-						<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirm(member.id, "delete")}>
-							<div className="modal__members-item-info">
-								<img src={member.avatar} alt="" className="modal__members-item-avatar" />
-								<div className="modal__members-item-nameEmail">
-									<span className="modal__members-item-name">{member.username}</span>
-									<span className="modal__members-item-email">{member.email}</span>
+				) : (
+					<div>
+						<span className="modal__members-creator">Creator</span>
+						<div className="modal__members-creatorWrap">
+							<div className="modal__members-item">
+								<div className="modal__members-item-info">
+									<img src={creator?.avatar} alt="" className="modal__members-item-avatar" />
+									<div className="modal__members-item-nameEmail">
+										<span className="modal__members-item-name">{creator?.username}</span>
+										<span className="modal__members-item-email">{creator?.email}</span>
+									</div>
 								</div>
 							</div>
-							{pendingId && pendingId.some((id: string) => id === member.id) ? <span className="modal__members-item-pending">Pending</span> : ""}
-							<i className="fa-solid fa-trash modal__members-item-remove" />
 						</div>
-					))}
-				</div>
+						<span className="modal__members-your">Members</span>
+						<div className="modal__members-list">
+							{members?.map((member) => (
+								<div className="modal__members-item" key={member.id} onClick={() => handleSetShowConfirm(member.id, "delete")}>
+									<div className="modal__members-item-info">
+										<img src={member.avatar} alt="" className="modal__members-item-avatar" />
+										<div className="modal__members-item-nameEmail">
+											<span className="modal__members-item-name">{member.username}</span>
+											<span className="modal__members-item-email">{member.email}</span>
+										</div>
+									</div>
+									{pendingId && pendingId.some((id: string) => id === member.id) ? <span className="modal__members-item-pending">Pending</span> : ""}
+									<i className="fa-solid fa-trash modal__members-item-remove" />
+								</div>
+							))}
+						</div>
+					</div>
+				)}
 			</div>
 			{showModalConfirm ? <ModalConfirm close={() => setShowModalConfirm(false)} message={confirmMessage} setConfirmSelect={(select: boolean) => setConfirmSelect(select)} /> : ""}
 		</div>

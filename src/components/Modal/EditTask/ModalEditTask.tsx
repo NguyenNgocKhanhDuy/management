@@ -6,6 +6,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { TextareaAutosize } from "@mui/material";
 import axios from "axios";
 import { formatMonth } from "~/utils/date";
+import ModalConfirm from "../Confirm/ModalConfirm";
 
 interface SubTask {
 	id: string;
@@ -39,9 +40,13 @@ function ModalEditTask(props: any) {
 	const [creator, setCreator] = useState<User>();
 	const [taskName, setTaskName] = useState("");
 	const [enableEditTaskName, setEnableEditTaskName] = useState(false);
+	const [showModalConfirm, setShowModalConfirm] = useState(false);
+	const [confirmMessage, setConfirmMessage] = useState("");
+	const [confirmSelect, setConfirmSelect] = useState(false);
+	const [percentage, setPercentage] = useState(100);
 
 	useEffect(() => {
-		// handleGetSubTasks();
+		handleGetSubTasks();
 		handleGetTask();
 		setCreator(props.creator);
 	}, []);
@@ -224,7 +229,14 @@ function ModalEditTask(props: any) {
 
 			const data = response.data;
 			if (data.status) {
-				setSubtasks(data.result);
+				if (data.result.length > 0) {
+					setSubtasks(data.result);
+					const taskCompleted = data.result.filter((task: SubTask) => task.completed === true);
+					const totalTask = data.result.length;
+					const totalCompleted = taskCompleted.length;
+					const percentCompleted = (totalCompleted / totalTask) * 100;
+					setPercentage(percentCompleted);
+				}
 				props.setLoading(false);
 			}
 		} catch (error: any) {
@@ -242,6 +254,13 @@ function ModalEditTask(props: any) {
 			props.setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		const percentBar = document.querySelector(".modal-edit__progress-capacity") as HTMLSpanElement;
+		if (percentBar) {
+			percentBar.style.width = percentage + "%";
+		}
+	}, [percentage]);
 
 	const handleGetTask = async () => {
 		try {
@@ -343,6 +362,17 @@ function ModalEditTask(props: any) {
 		}
 	};
 
+	useEffect(() => {
+		if (confirmSelect) {
+			handleDeleteTask();
+		}
+	}, [confirmSelect]);
+
+	const handleShowModalConfirm = () => {
+		setConfirmMessage("Do you want to delete?");
+		setShowModalConfirm(true);
+	};
+
 	const handleClose = (e: any) => {
 		e.stopPropagation();
 		props.close();
@@ -354,7 +384,6 @@ function ModalEditTask(props: any) {
 				<div className="modal-edit__container">
 					<i className="fa-solid fa-xmark modal-edit__close" onClick={handleClose}></i>
 					<input type="text" className="modal-edit__input-taskName" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
-					{/* <h2>{task?.name}</h2> */}
 					<div className="modal-edit__info">
 						<div className="modal-edit__creator">
 							<img src={creator?.avatar} alt="avatar-creator" className="modal-edit__creator-avatar" />
@@ -365,10 +394,6 @@ function ModalEditTask(props: any) {
 							{task && <span>{handleChangeDateFormat(task.date)}</span>}
 						</div>
 					</div>
-					{/* <div className="modal-edit__desc">
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores numquam quibusdam dolor possimus quam et doloremque dolorum reiciendis nam tempora temporibus eveniet eaque ex natus sed repudiandae inventore, quaerat dolores. Lorem ipsum, dolor sit amet consectetur adipisicing
-						elit. Dolores facilis, aspernatur quae architecto laudantium repellendus corporis perferendis quam quasi ipsum unde laborum qui libero vero quaerat quis cumque beatae saepe!
-					</div> */}
 					<div className="modal-edit__wrap">
 						<div className="modal-edit__date-deadline">
 							<i className="fa-regular fa-clock"> :</i>
@@ -388,14 +413,14 @@ function ModalEditTask(props: any) {
 								Save Name Task
 							</button>
 						)}
-						<button className="modal-edit__delete-task" onClick={handleDeleteTask}>
+						<button className="modal-edit__delete-task" onClick={handleShowModalConfirm}>
 							Delete Task
 						</button>
 					</div>
 					<div className="modal-edit__progress">
 						<div className="modal-edit__progress-text">
 							<span>Progress</span>
-							<span className="modal-edit__progress-percentage">50%</span>
+							<span className="modal-edit__progress-percentage">{percentage}%</span>
 						</div>
 						<span className="modal-edit__progress-full"></span>
 						<span className="modal-edit__progress-capacity"></span>
@@ -404,10 +429,9 @@ function ModalEditTask(props: any) {
 						{subtasks.map((subtask: SubTask) => (
 							<div className="modal-edit__subtask-item" key={subtask.id}>
 								<Checkbox checked={subtask.completed} className="modal-edit__subtask-item-checkbox" onChange={(e) => handleCheckSubtask(e, subtask.id)} />
-								<TextareaAutosize className="modal-edit__subtask-item-text" value={subtask.title} onChange={(e) => handleChangeTitleSubTask(e.target.value, subtask.id)} readOnly={!subtask.isEditable} />
+								<TextareaAutosize className={(subtask.completed ? "modal-edit__subtask-item-text--done" : "") + " modal-edit__subtask-item-text"} value={subtask.title} onChange={(e) => handleChangeTitleSubTask(e.target.value, subtask.id)} readOnly={!subtask.isEditable} />
 								<div className="modal-edit__subtask-item-action">
 									{subtask.isEditable ? <i className="fa-solid fa-check" onClick={() => handleSubmitEdit(subtask.id, subtask.title)}></i> : <i className="fa-solid fa-pen-to-square" onClick={() => handleEnableEditSubTask(subtask.id, true)}></i>}
-
 									<i className="fa-solid fa-trash" onClick={() => handleDeleteSubTask(subtask.id)}></i>
 								</div>
 							</div>
@@ -415,6 +439,7 @@ function ModalEditTask(props: any) {
 					</div>
 				</div>
 			</div>
+			{showModalConfirm ? <ModalConfirm close={() => setShowModalConfirm(false)} message={confirmMessage} setConfirmSelect={(select: boolean) => setConfirmSelect(select)} /> : ""}
 		</div>
 	);
 }

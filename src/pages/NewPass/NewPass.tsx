@@ -28,11 +28,6 @@ function NewPass() {
 			setErrorMessage("Incorrect password and confirmation password");
 			setLoading(false);
 		} else {
-			const requestBody = {
-				email: email,
-				password: passInput.value,
-			};
-
 			try {
 				const response = await axios.post(
 					`${process.env.REACT_APP_API_BASE_URL}/users/updatePassword`,

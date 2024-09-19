@@ -129,7 +129,7 @@ function Task(props: any) {
 						<h2 className="task-item-content-title">{props.name}</h2>
 						{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
 					</div>
-					<div className="task-item-progress">
+					{/* <div className="task-item-progress">
 						<div className="status">
 							<h2 className="title">Progress</h2>
 							<span className="percentage">50%</span>
@@ -138,7 +138,7 @@ function Task(props: any) {
 							<span className="full"></span>
 							<span className="capacity"></span>
 						</div>
-					</div>
+					</div> */}
 					<div className="task-item-bottom">
 						<div className="task-item-bottom-wrap">
 							<img src={creator?.avatar} alt="avatar" className="avatar" />

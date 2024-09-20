@@ -1,0 +1,162 @@
+@import "../../assets/style/base.scss";
+
+.profile {
+	height: 100%;
+	overflow-y: auto;
+
+	&__avatar {
+		&-img {
+			width: 20%;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+	}
+
+	&__details {
+		width: 70%;
+		margin: 40px auto;
+	}
+
+	&__holder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 40px 0;
+
+		i {
+			background-color: $green;
+			border-radius: 50%;
+			color: white;
+			padding: 10px 11px;
+			cursor: pointer;
+			transition: all 0.25s linear;
+			&:hover {
+				background-color: $yellow;
+				color: $green;
+			}
+		}
+	}
+
+	&__info {
+		width: 70%;
+		display: flex;
+		align-items: center;
+
+		&--hide {
+			visibility: hidden;
+		}
+	}
+
+	&__label {
+		width: 120px;
+		text-align: left;
+	}
+
+	&__input {
+		border: none;
+		outline: none;
+		background-color: transparent;
+		font-size: 16px;
+	}
+
+	&__changePass {
+		background-color: $green;
+		color: white;
+		font-size: 16px;
+		padding: 12px 12px;
+		border-radius: 4px;
+		@include border(1, 1, 1, 1);
+		cursor: pointer;
+		transition: all 0.25s linear;
+
+		&:hover {
+			background-color: $yellow;
+			color: $green;
+		}
+	}
+
+	&__invitation {
+		padding: 30px;
+		@include border(2, 0, 0, 0);
+		&-title {
+			width: 60%;
+			margin: 0 auto;
+			font-size: 30px;
+			text-align: left;
+		}
+		&-list {
+			margin: 30px 0;
+			display: flex;
+			gap: 30px;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		&-item {
+			display: flex;
+			align-items: center;
+			width: 60%;
+			padding: 12px;
+			border-radius: 4px;
+			@include border(1, 1, 1, 1);
+
+			&-info {
+				display: flex;
+				gap: 12px;
+				width: 70%;
+				flex-direction: column;
+			}
+
+			&-project {
+				font-size: 20px;
+				font-weight: 600;
+				text-align: left;
+				margin-left: 12px;
+			}
+
+			&-creator {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+
+				&-avatar {
+					width: 30px;
+					height: 30px;
+					border-radius: 50%;
+					@include border(2, 2, 2, 2);
+				}
+
+				&-nameWrap {
+					display: flex;
+					flex-direction: column;
+					gap: 4px;
+				}
+
+				&-name {
+					text-align: left;
+				}
+			}
+
+			&-action {
+				width: 30%;
+				text-align: right;
+
+				i {
+					border-radius: 50%;
+					padding: 12px 13px;
+					margin: 0 6px;
+					background-color: white;
+					@include border(1, 1, 1, 1);
+					cursor: pointer;
+					transition: all 0.25s linear;
+
+					&:hover {
+						background-color: $green;
+						color: $yellow;
+					}
+				}
+			}
+		}
+	}
+}

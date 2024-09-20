@@ -64,11 +64,6 @@
 		}
 	}
 
-	.isItemSelected {
-		background-color: $yellow;
-		color: $green;
-	}
-
 	.account {
 		text-align: left;
 		position: absolute;
@@ -93,11 +88,17 @@
 			width: 30px;
 			height: 30px;
 			border-radius: 50%;
+			@include border(2, 2, 2, 2);
 		}
 
 		i {
 			margin-left: auto;
 		}
+	}
+
+	.isItemSelected {
+		background-color: $yellow;
+		color: $green;
 	}
 }
 

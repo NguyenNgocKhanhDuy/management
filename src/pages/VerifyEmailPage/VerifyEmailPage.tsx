@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./verifyEmailPage.scss";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loading from "~/components/Loading/Loading";
 import axios from "axios";
-import { getEmail, getIsForgotPass, removeIsForgotPass } from "~/store/localStorage";
+import { getEmail, getIsForgotPass } from "~/store/localStorage";
 
 function VerifyEmailPage() {
 	const [errorMessage, setErrorMessage] = useState("");

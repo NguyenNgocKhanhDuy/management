@@ -10,6 +10,7 @@ import { dateShort, formatDateFull, formatMonth } from "~/utils/date";
 import { getProjectId, getToken, removeProjectId } from "~/store/localStorage";
 import ModalConfirm from "~/components/Modal/Confirm/ModalConfirm";
 import debounce from "lodash.debounce";
+import Profile from "~/components/Profile/Profile";
 
 interface User {
 	id: string;
@@ -31,6 +32,7 @@ function HomePage() {
 	const [showModalMembers, setShowModalMembers] = useState(false);
 	const [isManagement, setIsManagement] = useState(false);
 	const [isProject, setIsProject] = useState(true);
+	const [isProfile, setIsProfile] = useState(false);
 	const token = getToken();
 	const [user, setUser] = useState<User>();
 	const [showError, setShowError] = useState(false);
@@ -62,10 +64,18 @@ function HomePage() {
 	const handleChangeToManagement = (isManagement: boolean) => {
 		setIsManagement(isManagement);
 		setIsProject(false);
+		setIsProfile(false);
 	};
 
 	const handleChangeToProject = (isProject: boolean) => {
 		setIsProject(isProject);
+		setIsManagement(false);
+		setIsProfile(false);
+	};
+
+	const handleChangeToProfile = (isProfile: boolean) => {
+		setIsProfile(isProfile);
+		setIsProject(false);
 		setIsManagement(false);
 	};
 
@@ -334,15 +344,16 @@ function HomePage() {
 				<div className={(isManagement ? "isItemSelected" : "") + " item"} onClick={() => handleChangeToManagement(true)}>
 					<i className="fa-solid fa-list-check"></i>
 					<span>Tasks</span>
-					<span className="amount">12</span>
+					{/* <span className="amount">12</span> */}
 				</div>
-				<div className="account">
-					<img src={blackImg} alt="avatar" className="avatar" />
+				<div className={(isProfile ? "isItemSelected" : "") + " account"} onClick={() => handleChangeToProfile(true)}>
+					<img src={user?.avatar} alt="avatar" className="avatar" />
 					<span className="name">{user ? user.username : "Username"}</span>
 					<i className="fa-solid fa-angle-right"></i>
 				</div>
 			</div>
 			<div className="main-container">
+				{/* {!isProfile ? ( */}
 				<div className="top">
 					<div className="greeting">
 						Welcome,
@@ -377,53 +388,62 @@ function HomePage() {
 						<i className="fa-regular fa-circle-question"></i>
 					</div>
 				</div>
-				<div className="content">
-					<div className="content-top">
-						<div className="date">
-							{isProject ? (
-								<div className="today">{formatDateFull(new Date())}</div>
-							) : (
-								<div className="date-wrap">
-									<div className="today">{dateShort(new Date())}</div>
-									<div className="new box" onClick={handleSetShowConfirm}>
-										<i className="fa-solid fa-minus"></i>
-										<span>DeleteProject</span>
-									</div>
-								</div>
-							)}
-						</div>
-						{isManagement ? (
-							<div className="project">
-								<input type="text" className="project-name-input" value={projectName} readOnly={!editProjectName} onChange={(e) => setProjectName(e.target.value)} />
-								<span className="project-name-edit">{editProjectName ? <i className="fa-solid fa-check" onClick={handleUpdateProjectName}></i> : <i className="fa-solid fa-pen-to-square" onClick={handleChangeToEdit}></i>}</span>
-							</div>
-						) : (
-							""
-						)}
+				{/* ) : (
+					""
+				)} */}
 
-						<div className="more">
+				<div className="content">
+					{!isProfile ? (
+						<div className="content-top">
+							<div className="date">
+								{isProject ? (
+									<div className="today">{formatDateFull(new Date())}</div>
+								) : (
+									<div className="date-wrap">
+										<div className="today">{dateShort(new Date())}</div>
+										<div className="new box" onClick={handleSetShowConfirm}>
+											<i className="fa-solid fa-minus"></i>
+											<span>DeleteProject</span>
+										</div>
+									</div>
+								)}
+							</div>
 							{isManagement ? (
-								<div className="filter box" onClick={() => setShowModalMembers(true)}>
-									<i className="fa-solid fa-users"></i>
-									<span>Members</span>
+								<div className="project">
+									<input type="text" className="project-name-input" value={projectName} readOnly={!editProjectName} onChange={(e) => setProjectName(e.target.value)} />
+									<span className="project-name-edit">{editProjectName ? <i className="fa-solid fa-check" onClick={handleUpdateProjectName}></i> : <i className="fa-solid fa-pen-to-square" onClick={handleChangeToEdit}></i>}</span>
 								</div>
 							) : (
 								""
 							)}
 
-							{isProject ? (
-								<div className="new box" onClick={() => setShowModalNewProject(true)}>
-									<i className="fa-solid fa-plus"></i>
-									<span>New Project</span>
-								</div>
-							) : (
-								<div className="new box" onClick={() => setShowModalCreateTask(true)}>
-									<i className="fa-solid fa-plus"></i>
-									<span>Create task</span>
-								</div>
-							)}
+							<div className="more">
+								{isManagement ? (
+									<div className="filter box" onClick={() => setShowModalMembers(true)}>
+										<i className="fa-solid fa-users"></i>
+										<span>Members</span>
+									</div>
+								) : (
+									""
+								)}
+
+								{isProject ? (
+									<div className="new box" onClick={() => setShowModalNewProject(true)}>
+										<i className="fa-solid fa-plus"></i>
+										<span>New Project</span>
+									</div>
+								) : (
+									<div className="new box" onClick={() => setShowModalCreateTask(true)}>
+										<i className="fa-solid fa-plus"></i>
+										<span>Create task</span>
+									</div>
+								)}
+							</div>
 						</div>
-					</div>
+					) : (
+						""
+					)}
+
 					{isManagement ? (
 						<Management
 							token={token}
@@ -448,6 +468,8 @@ function HomePage() {
 							showManagement={() => setIsManagement(true)}
 							setProjectName={(name: string) => setProjectName(name)}
 						/>
+					) : isProfile ? (
+						<Profile user={user} updateUser={handleGetUser} setErrorMessage={(message: string) => setErrorMessage(message)} setShowError={(isShow: boolean) => setShowError(isShow)} setLoading={(isLoading: boolean) => setLoading(isLoading)} />
 					) : (
 						<div>No</div>
 					)}

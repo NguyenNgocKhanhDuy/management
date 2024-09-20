@@ -21,6 +21,7 @@
 		"@types/node": "^16.18.104",
 		"@types/react-dom": "^18.3.0",
 		"axios": "^1.7.7",
+		"firebase": "^10.13.2",
 		"lodash.debounce": "^4.0.8",
 		"moment": "^2.30.1",
 		"react": "^18.3.1",

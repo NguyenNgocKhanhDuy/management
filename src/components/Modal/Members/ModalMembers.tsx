@@ -116,6 +116,8 @@ function ModalMembers(props: any) {
 	};
 
 	const handleGetProject = async () => {
+		console.log("get");
+
 		props.setLoading(true);
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/${projectId}`, {
@@ -214,9 +216,11 @@ function ModalMembers(props: any) {
 
 		if (confirmSelect && deleteId != "") {
 			handleDeleteMembers(deleteId);
+			setConfirmSelect(false);
 		}
 		if (confirmSelect && addMemId != "") {
 			handleAddMember(addMemId);
+			setConfirmSelect(false);
 		}
 	}, [confirmSelect]);
 
@@ -234,8 +238,16 @@ function ModalMembers(props: any) {
 
 	const handleDeleteMembers = async (idMem: string) => {
 		props.setLoading(true);
-		const isMember = membersId.some((id: string) => id === idMem);
-		const isPending = pendingId.some((id: string) => id === idMem);
+		console.log("1");
+
+		var isMember;
+		var isPending;
+		if (membersId) {
+			isMember = membersId.some((id: string) => id === idMem);
+		}
+		if (pendingId) {
+			isPending = pendingId.some((id: string) => id === idMem);
+		}
 		if (isMember) {
 			const updateMembersId = membersId.filter((id: string) => id !== idMem);
 			try {
@@ -334,6 +346,8 @@ function ModalMembers(props: any) {
 			const data = response.data;
 			if (data.status) {
 				setAddMemId("");
+				setValue("");
+				handleShowResultSearch(false);
 				handleGetProject();
 				props.setLoading(false);
 			}

@@ -192,6 +192,7 @@ function HomePage() {
 	useEffect(() => {
 		if (confirmSelect) {
 			handleDeleteProject();
+			setConfirmSelect(false);
 		}
 	}, [confirmSelect]);
 

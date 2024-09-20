@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./profile.scss";
 import blackImg from "~/assets/img/black.jpg";
 import axios from "axios";
-import { getToken, saveEmail, setIsForgotPass } from "~/store/localStorage";
+import { getToken, removeEmail, removeProjectId, removeToken, saveEmail, setIsForgotPass } from "~/store/localStorage";
 import { useNavigate } from "react-router-dom";
 import ModalImageZoom from "../Modal/ImageZoom/ModalImageZoom";
 
@@ -302,8 +302,20 @@ function Profile(props: any) {
 		}
 	};
 
+	const handleLogOut = () => {
+		removeEmail();
+		removeProjectId();
+		removeToken();
+		navigate("/login");
+	};
+
 	return (
 		<div className="profile">
+			<div className="profile__logout">
+				<button className="profile__logout-btn" onClick={handleLogOut}>
+					Log out
+				</button>
+			</div>
 			<div className="profile__avatar">
 				<img src={user?.avatar} className="profile__avatar-img" onClick={() => setShowModalImage(true)} />
 			</div>

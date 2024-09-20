@@ -365,6 +365,7 @@ function ModalEditTask(props: any) {
 	useEffect(() => {
 		if (confirmSelect) {
 			handleDeleteTask();
+			setConfirmSelect(false);
 		}
 	}, [confirmSelect]);
 

@@ -1,0 +1,41 @@
+@import "../../assets/style/base.scss";
+
+.error {
+	height: 100vh;
+	background-color: $green;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&__wrap {
+		color: white;
+	}
+
+	&__title {
+		font-size: 60px;
+		font-weight: 600;
+	}
+
+	&__subtitle {
+		font-size: 40px;
+		margin: 30px 0;
+	}
+
+	&__description {
+		font-size: 24px;
+		margin-bottom: 30px;
+	}
+
+	&__link {
+		font-size: 20px;
+		color: $yellow;
+		margin-left: auto;
+		text-decoration: underline;
+		cursor: pointer;
+		transition: all 0.25s linear;
+
+		&:hover {
+			color: aqua;
+		}
+	}
+}

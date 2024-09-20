@@ -74,7 +74,6 @@ function Task(props: any) {
 			</div>
 			<div className="task-item-content">
 				<h2 className="task-item-content-title">{props.name}</h2>
-				{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
 			</div>
 			<div className="task-item-progress">
 				<div className="status">
@@ -96,10 +95,6 @@ function Task(props: any) {
 						<i className="fa-solid fa-flag"></i>
 						<span className="dateTime">{handleFormatDate(props.deadline)}</span>
 					</div>
-					{/* <div className="comment">
-						<i className="fa-solid fa-message"></i>
-						<span className="amount">2</span>
-					</div> */}
 				</div>
 			</div>
 			{showModalEditTask ? (
@@ -127,18 +122,7 @@ function Task(props: any) {
 					</div>
 					<div className="task-item-content">
 						<h2 className="task-item-content-title">{props.name}</h2>
-						{/* <p className="task-item-content-desc">IMV official Site - Empower your teams. Take your project data management skills to next level.Concept to...</p> */}
 					</div>
-					{/* <div className="task-item-progress">
-						<div className="status">
-							<h2 className="title">Progress</h2>
-							<span className="percentage">50%</span>
-						</div>
-						<div className="line">
-							<span className="full"></span>
-							<span className="capacity"></span>
-						</div>
-					</div> */}
 					<div className="task-item-bottom">
 						<div className="task-item-bottom-wrap">
 							<img src={creator?.avatar} alt="avatar" className="avatar" />
@@ -149,10 +133,6 @@ function Task(props: any) {
 								<i className="fa-solid fa-flag"></i>
 								<span className="dateTime">{handleFormatDate(props.deadline)}</span>
 							</div>
-							{/* <div className="comment">
-						<i className="fa-solid fa-message"></i>
-						<span className="amount">2</span>
-					</div> */}
 						</div>
 					</div>
 					{showModalEditTask ? (

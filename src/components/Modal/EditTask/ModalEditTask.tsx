@@ -67,6 +67,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleSubmitEdit = async (id: string, newText: string) => {
+		props.setLoading(true);
 		try {
 			const response = await axios.put(
 				`${process.env.REACT_APP_API_BASE_URL}/subtasks/updateSubtaskTitle`,
@@ -86,6 +87,7 @@ function ModalEditTask(props: any) {
 			if (data.status) {
 				handleGetSubTasks();
 				handleEnableEditSubTask(id, false);
+				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -104,6 +106,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleCheckSubtask = async (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+		props.setLoading(true);
 		try {
 			const response = await axios.put(
 				`${process.env.REACT_APP_API_BASE_URL}/subtasks/updateSubtaskStatus`,
@@ -122,6 +125,7 @@ function ModalEditTask(props: any) {
 			const data = response.data;
 			if (data.status) {
 				handleGetSubTasks();
+				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -150,6 +154,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleDeleteSubTask = async (id: string) => {
+		props.setLoading(true);
 		const updateSubTask = subtasks.filter((subtask) => subtask.id !== id);
 		setSubtasks(updateSubTask);
 
@@ -164,6 +169,7 @@ function ModalEditTask(props: any) {
 			const data = response.data;
 			if (data.status) {
 				handleGetSubTasks();
+				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -182,6 +188,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleNewSubTask = async () => {
+		props.setLoading(true);
 		try {
 			const response = await axios.post(
 				`${process.env.REACT_APP_API_BASE_URL}/subtasks/addSubtask`,
@@ -201,6 +208,7 @@ function ModalEditTask(props: any) {
 			const data = response.data;
 			if (data.status) {
 				handleGetSubTasks();
+				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {
@@ -219,6 +227,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleGetSubTasks = async () => {
+		props.setLoading(true);
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/subtasks/${props.taskId}`, {
 				headers: {
@@ -263,6 +272,7 @@ function ModalEditTask(props: any) {
 	}, [percentage]);
 
 	const handleGetTask = async () => {
+		props.setLoading(true);
 		try {
 			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tasks/${props.taskId}`, {
 				headers: {
@@ -295,6 +305,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleUpdateTaskName = async () => {
+		props.setLoading(true);
 		try {
 			const response = await axios.put(
 				`${process.env.REACT_APP_API_BASE_URL}/tasks/updateTaskName`,
@@ -314,6 +325,7 @@ function ModalEditTask(props: any) {
 			if (data.status) {
 				handleGetTask();
 				setEnableEditTaskName(false);
+				props.handleGetTaskOfProject();
 				props.setLoading(false);
 			}
 		} catch (error: any) {
@@ -333,6 +345,7 @@ function ModalEditTask(props: any) {
 	};
 
 	const handleDeleteTask = async () => {
+		props.setLoading(true);
 		try {
 			const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/tasks/${props.taskId}`, {
 				headers: {
@@ -345,6 +358,7 @@ function ModalEditTask(props: any) {
 			if (data.status) {
 				props.close();
 				props.handleGetTaskOfProject();
+				props.setLoading(false);
 			}
 		} catch (error: any) {
 			if (error.response) {

@@ -31,9 +31,9 @@ function ModalCreateTask(props: any) {
 
 			const data = response.data;
 			if (data.status) {
+				props.close();
 				props.setLoading(false);
 				props.handleGetTaskOfProject();
-				props.close();
 			}
 		} catch (error: any) {
 			if (error.response) {

@@ -30,9 +30,9 @@ function ModalNewProject(props: any) {
 
 			const data = response.data;
 			if (data.status) {
+				props.close();
 				setLoading(false);
 				props.handleGetProjectHasUser();
-				props.close();
 			}
 		} catch (error: any) {
 			if (error.response) {

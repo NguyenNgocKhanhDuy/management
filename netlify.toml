@@ -1,11 +1,4 @@
-[build]
-  base = "/"  # Thư mục gốc của dự án. Thay đổi nếu mã nguồn ở thư mục khác.
-  publish = "build"  # Thư mục chứa file sau khi build (React dùng thư mục build).
-  command = "npm run build"  # Lệnh để build ứng dụng.
 [[redirects]]
 from="/*"
 to="/index.html"
 status=200
-
-[functions]
-  directory = "netlify/functions"  # Thư mục chứa Netlify Functions (nếu có).

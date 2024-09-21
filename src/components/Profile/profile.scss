@@ -26,9 +26,12 @@
 
 	&__avatar {
 		&-img {
-			width: 20%;
 			border-radius: 50%;
 			cursor: pointer;
+			width: 20%;
+			aspect-ratio: 1 / 1;
+			height: 20%;
+			object-fit: cover;
 		}
 	}
 

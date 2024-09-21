@@ -88,6 +88,7 @@
 			width: 30px;
 			height: 30px;
 			border-radius: 50%;
+			object-fit: cover;
 			@include border(2, 2, 2, 2);
 		}
 
@@ -199,6 +200,7 @@
 				&-avatar {
 					width: 30px;
 					height: 30px;
+					object-fit: cover;
 					border-radius: 50%;
 					@include border(2, 2, 2, 2);
 				}

@@ -11,6 +11,7 @@ import { getProjectId, getToken, removeProjectId } from "~/store/localStorage";
 import ModalConfirm from "~/components/Modal/Confirm/ModalConfirm";
 import debounce from "lodash.debounce";
 import Profile from "~/components/Profile/Profile";
+import { useNavigate } from "react-router-dom";
 
 interface User {
 	id: string;
@@ -50,6 +51,7 @@ function HomePage() {
 	const [projectSearch, setProjectSearch] = useState<Project[]>([]);
 	const [creators, setCreators] = useState<User[]>([]);
 	const [creatorsId, setCreatorsId] = useState<string[]>([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		handleGetUser();

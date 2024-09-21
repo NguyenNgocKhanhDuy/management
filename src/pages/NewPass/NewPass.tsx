@@ -29,7 +29,7 @@ function NewPass() {
 			setLoading(false);
 		} else {
 			try {
-				const response = await axios.post(
+				const response = await axios.put(
 					`${process.env.REACT_APP_API_BASE_URL}/users/updatePassword`,
 					{
 						email: email,

@@ -331,7 +331,7 @@ function ModalMembers(props: any) {
 		const updatePending = [...pendingId, idMem];
 		try {
 			const response = await axios.put(
-				`${process.env.REACT_APP_API_BASE_URL}/projects/addMemberPending`,
+				`${process.env.REACT_APP_API_BASE_URL}/projects/addUserIntoPending`,
 				{
 					id: projectId,
 					pending: updatePending,

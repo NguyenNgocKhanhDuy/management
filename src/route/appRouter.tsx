@@ -7,6 +7,9 @@ import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import VerifyEmailPage from "../pages/VerifyEmailPage/VerifyEmailPage";
 import NewPass from "../pages/NewPass/NewPass";
+import Profile from "~/components/Profile/Profile";
+import Project from "~/components/Project/Project";
+import Management from "~/components/Management/Management";
 
 export const router = createBrowserRouter([
 	{
@@ -37,6 +40,20 @@ export const router = createBrowserRouter([
 			{
 				path: "/home",
 				element: <HomePage />,
+				children: [
+					{
+						path: "project",
+						element: <Project />,
+					},
+					{
+						path: "task",
+						element: <Management />,
+					},
+					{
+						path: "profile",
+						element: <Profile />,
+					},
+				],
 			},
 		],
 	},

@@ -328,7 +328,13 @@ function ModalMembers(props: any) {
 
 	const handleAddMember = async (idMem: string) => {
 		props.setLoading(true);
-		const updatePending = [...pendingId, idMem];
+		var updatePending;
+		if (pendingId != null) {
+			updatePending = [...pendingId, idMem];
+		} else {
+			updatePending = [idMem];
+		}
+
 		try {
 			const response = await axios.put(
 				`${process.env.REACT_APP_API_BASE_URL}/projects/addUserIntoPending`,

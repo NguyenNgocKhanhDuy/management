@@ -11,7 +11,7 @@ import { getProjectId, getToken, removeProjectId } from "~/store/localStorage";
 import ModalConfirm from "~/components/Modal/Confirm/ModalConfirm";
 import debounce from "lodash.debounce";
 import Profile from "~/components/Profile/Profile";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface User {
 	id: string;
@@ -52,9 +52,30 @@ function HomePage() {
 	const [creators, setCreators] = useState<User[]>([]);
 	const [creatorsId, setCreatorsId] = useState<string[]>([]);
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		if (location.pathname === "/home/profile") {
+			setIsProfile(true);
+			setIsProject(false);
+			setIsManagement(false);
+		} else if (location.pathname === "/home/project") {
+			setIsProject(true);
+			setIsProfile(false);
+			setIsManagement(false);
+		} else if (location.pathname === `/home/task`) {
+			setIsManagement(true);
+			setIsProfile(false);
+			setIsProject(false);
+		}
+	}, [location.pathname]);
 
 	useEffect(() => {
 		handleGetUser();
+	}, []);
+
+	useEffect(() => {
+		navigate("/home/project", { replace: true });
 	}, []);
 
 	useEffect(() => {
@@ -67,18 +88,21 @@ function HomePage() {
 		setIsManagement(isManagement);
 		setIsProject(false);
 		setIsProfile(false);
+		navigate("/home/task");
 	};
 
 	const handleChangeToProject = (isProject: boolean) => {
 		setIsProject(isProject);
 		setIsManagement(false);
 		setIsProfile(false);
+		navigate("/home/project");
 	};
 
 	const handleChangeToProfile = (isProfile: boolean) => {
 		setIsProfile(isProfile);
 		setIsProject(false);
 		setIsManagement(false);
+		navigate("/home/profile");
 	};
 
 	const handleGetUser = async () => {

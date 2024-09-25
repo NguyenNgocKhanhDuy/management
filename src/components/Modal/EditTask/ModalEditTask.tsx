@@ -34,7 +34,7 @@ interface Task {
 }
 
 function ModalEditTask(props: any) {
-	const [deadline, setDeadline] = useState<Date | null>();
+	const [deadline, setDeadline] = useState<Date | null>(null);
 	const [subtasks, setSubtasks] = useState<SubTask[]>([]);
 	const [task, setTask] = useState<Task>();
 	const [creator, setCreator] = useState<User>();
@@ -284,7 +284,9 @@ function ModalEditTask(props: any) {
 			const data = response.data;
 			if (data.status) {
 				setTask(data.result);
-				setDeadline(data.result.deadline);
+				const utcDate = new Date(data.result.deadline);
+				const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+				setDeadline(localDate);
 				setTaskName(data.result.name);
 				props.setLoading(false);
 			}
@@ -393,6 +395,20 @@ function ModalEditTask(props: any) {
 		props.close();
 	};
 
+	useEffect(() => {
+		console.log(deadline);
+	}, [deadline]);
+
+	const handleDateChange = (date: Date | null) => {
+		console.log("1");
+
+		if (date instanceof Date && !isNaN(date.getTime())) {
+			setDeadline(date);
+		} else {
+			setDeadline(new Date());
+		}
+	};
+
 	return (
 		<div>
 			<div className="modal-edit">
@@ -412,7 +428,7 @@ function ModalEditTask(props: any) {
 					<div className="modal-edit__wrap">
 						<div className="modal-edit__date-deadline">
 							<i className="fa-regular fa-clock"> :</i>
-							<DatePicker selected={deadline} onChange={(date) => setDeadline(date)} showTimeSelect dateFormat="MMMM do YYYY, hh:mm" className="modal-edit__date-deadline-date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
+							<DatePicker onChange={handleDateChange} selected={deadline} showTimeSelect dateFormat="MMMM do YYYY, hh:mm" className="modal-edit__date-deadline-date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
 						</div>
 						<button className="modal-edit__new-subtask" onClick={handleNewSubTask}>
 							New subtask

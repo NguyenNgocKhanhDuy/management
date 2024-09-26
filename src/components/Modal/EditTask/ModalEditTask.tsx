@@ -5,8 +5,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import Checkbox from "@mui/material/Checkbox";
 import { TextareaAutosize } from "@mui/material";
 import axios from "axios";
-import { formatMonth } from "~/utils/date";
+import { formatMonth, formatToLocalDateTime } from "~/utils/date";
 import ModalConfirm from "../Confirm/ModalConfirm";
+import debounce from "lodash.debounce";
 
 interface SubTask {
 	id: string;
@@ -44,6 +45,7 @@ function ModalEditTask(props: any) {
 	const [confirmMessage, setConfirmMessage] = useState("");
 	const [confirmSelect, setConfirmSelect] = useState(false);
 	const [percentage, setPercentage] = useState(100);
+	const debouncedRef = useRef<any>(null);
 
 	useEffect(() => {
 		handleGetSubTasks();
@@ -395,17 +397,63 @@ function ModalEditTask(props: any) {
 		props.close();
 	};
 
-	useEffect(() => {
-		console.log(deadline);
-	}, [deadline]);
-
 	const handleDateChange = (date: Date | null) => {
-		console.log("1");
+		if (date) {
+			debouncedRef.current(date);
+			console.log(date);
+		}
+	};
 
-		if (date instanceof Date && !isNaN(date.getTime())) {
-			setDeadline(date);
-		} else {
-			setDeadline(new Date());
+	if (!debouncedRef.current) {
+		debouncedRef.current = debounce((date: Date) => {
+			handleDateUpdate(date);
+		}, 300);
+	}
+
+	const handleDateUpdate = async (date: Date) => {
+		// if (date instanceof Date && !isNaN(date.getTime())) {
+		// 	setDeadline(date);
+		// } else {
+		// 	setDeadline(new Date());
+		// }
+
+		props.setLoading(true);
+
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_BASE_URL}/tasks/updateTaskDeadline`,
+				{
+					id: props.taskId,
+					deadline: date ? formatToLocalDateTime(date) : formatToLocalDateTime(new Date()),
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${props.token}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			if (data.status) {
+				handleGetTask();
+				console.log(date);
+				props.handleGetTaskOfProject();
+				props.setLoading(false);
+			}
+		} catch (error: any) {
+			if (error.response) {
+				console.error("Error:", error.response.data.message || error.response.data.error);
+				props.setErrorMessage(error.response.data.message || error.response.data.error);
+			} else if (error.request) {
+				console.error("Error:", error.request);
+				props.setErrorMessage("Failed to connect to server.");
+			} else {
+				console.error("Error:", error.message);
+				props.setErrorMessage("An unexpected error occurred: " + error.message);
+			}
+			props.setShowError(true);
+			props.setLoading(false);
 		}
 	};
 
@@ -428,7 +476,7 @@ function ModalEditTask(props: any) {
 					<div className="modal-edit__wrap">
 						<div className="modal-edit__date-deadline">
 							<i className="fa-regular fa-clock"> :</i>
-							<DatePicker onChange={handleDateChange} selected={deadline} showTimeSelect dateFormat="MMMM do YYYY, hh:mm" className="modal-edit__date-deadline-date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
+							<DatePicker onChange={handleDateChange} selected={deadline} showTimeSelect dateFormat="MMMM do YYYY, hh:mm aa" className="modal-edit__date-deadline-date-time" showYearDropdown yearDropdownItemNumber={100} scrollableYearDropdown />
 						</div>
 						<button className="modal-edit__new-subtask" onClick={handleNewSubTask}>
 							New subtask

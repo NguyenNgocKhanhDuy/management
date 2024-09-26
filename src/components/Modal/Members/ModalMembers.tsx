@@ -238,7 +238,6 @@ function ModalMembers(props: any) {
 
 	const handleDeleteMembers = async (idMem: string) => {
 		props.setLoading(true);
-		console.log("1");
 
 		var isMember;
 		var isPending;

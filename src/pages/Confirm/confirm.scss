@@ -1,0 +1,76 @@
+@import "../../assets/style/base.scss";
+
+.confirm {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-self: center;
+
+	&-content {
+		width: fit-content;
+		padding: 32px;
+		border-radius: 4px;
+		background-color: $background;
+		@include border(1, 1, 1, 1);
+	}
+
+	&-title {
+		text-align: center;
+		margin-bottom: 20px;
+		font-size: 24px;
+		font-weight: 600;
+	}
+
+	&-text {
+		text-align: center;
+		font-size: 16px;
+	}
+
+	&-action {
+		margin-top: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&-button {
+		outline: none;
+		border: none;
+		padding: 8px 12px;
+		border-radius: 4px;
+		transition: all 0.25s linear;
+		cursor: pointer;
+		@include border(1, 1, 1, 1);
+		font-size: 16px;
+		font-weight: 500;
+		color: $background;
+
+		&__accept {
+			background-color: $lightGreen;
+		}
+
+		&__reject {
+			background-color: red;
+		}
+
+		&:hover {
+			opacity: 0.7;
+		}
+	}
+
+    &__error {
+		color: red;
+		margin-right: auto;
+		margin-top: 12px;
+		font-weight: 600;
+		font-size: 16px;
+
+		&--hidden {
+			display: none;
+		}
+	}
+}

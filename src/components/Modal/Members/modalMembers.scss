@@ -79,10 +79,7 @@
 			background-color: $green;
 			color: $yellow;
 		}
-		
 	}
-
-
 
 	&-holder {
 		width: 100%;
@@ -111,6 +108,7 @@
 
 	&-search {
 		position: relative;
+		height: 100%;
 
 		&-result {
 			position: absolute;

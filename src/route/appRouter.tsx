@@ -10,6 +10,7 @@ import NewPass from "../pages/NewPass/NewPass";
 import Profile from "~/components/Profile/Profile";
 import Project from "~/components/Project/Project";
 import Management from "~/components/Management/Management";
+import Confirm from "~/pages/Confirm/Confirm";
 
 export const router = createBrowserRouter([
 	{
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
 			{
 				path: "/newPass",
 				element: <NewPass />,
+			},
+			{
+				path: "/confirm",
+				element: <Confirm />,
 			},
 			{
 				path: "/home",

@@ -5,6 +5,7 @@ import axios from "axios";
 import { getToken, removeEmail, removeProjectId, removeToken, saveEmail, setIsForgotPass } from "~/store/localStorage";
 import { useNavigate } from "react-router-dom";
 import ModalImageZoom from "../Modal/ImageZoom/ModalImageZoom";
+import ModalQR from "../Modal/QR/ModalQR";
 
 interface User {
 	id: string;
@@ -28,6 +29,7 @@ function Profile(props: any) {
 	const [creatorsId, setCreatorsId] = useState<string[]>();
 	const [creators, setCreators] = useState<User[]>();
 	const [showModalImage, setShowModalImage] = useState(false);
+	const [showModalQR, setShowModalQR] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -312,6 +314,9 @@ function Profile(props: any) {
 	return (
 		<div className="profile">
 			<div className="profile__logout">
+				<button className="profile__logout-btn" onClick={() => setShowModalQR(true)}>
+					QR
+				</button>
 				<button className="profile__logout-btn" onClick={handleLogOut}>
 					Log out
 				</button>
@@ -374,6 +379,8 @@ function Profile(props: any) {
 			) : (
 				""
 			)}
+			{showModalQR ? <ModalQR close={() => setShowModalQR
+				(false)} setErrorMessage={(message: string) => props.setErrorMessage(message)} setShowError={(isShow: boolean) => props.setShowError(isShow)} setLoading={(isLoading: boolean) => props.setLoading(isLoading)} /> : ""}
 		</div>
 	);
 }

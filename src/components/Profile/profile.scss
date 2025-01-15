@@ -5,6 +5,9 @@
 	overflow-y: auto;
 
 	&__logout {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		text-align: right;
 		margin-right: 20px;
 		&-btn {

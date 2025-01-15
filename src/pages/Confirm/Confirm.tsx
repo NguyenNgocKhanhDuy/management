@@ -62,9 +62,11 @@ export default function Confirm() {
 			const data = response.data;
 
 			if (data.status) {
-				setText("The Invitation is invalid");
-				setErrorMessage("");
-				setShowButton(false);
+				if (data.result.pending == null) {
+					setText("The Invitation is invalid");
+					setErrorMessage("");
+					setShowButton(false);
+				}
 				setLoading(false);
 			}
 		} catch (error: any) {

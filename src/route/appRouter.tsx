@@ -11,6 +11,7 @@ import Profile from "~/components/Profile/Profile";
 import Project from "~/components/Project/Project";
 import Management from "~/components/Management/Management";
 import Confirm from "~/pages/Confirm/Confirm";
+import Welcome from './../components/welcome';
 
 export const router = createBrowserRouter([
 	{
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				path: "/",
-				element: <Navigate to="/login" />,
+				element: <Welcome/>,
 			},
 			{
 				path: "/login",

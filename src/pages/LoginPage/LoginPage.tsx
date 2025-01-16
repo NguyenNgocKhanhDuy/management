@@ -47,7 +47,7 @@ function LoginPage() {
 
 				const data = response.data;
 				if (data.status) {
-					if (invite != null) {
+					if (invite == "yes") {
 						navigate(`/confirm?token=${tokenText}`);
 					} else {
 						saveToken(data.result.token);

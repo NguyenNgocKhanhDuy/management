@@ -13,43 +13,9 @@ function LoginPage() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 	const [searchParams] = useSearchParams();
-	const [token, setToken] = useState("");
 
 	const tokenText = searchParams.get("token");
 	const invite = searchParams.get("invite");
-
-	const handleCheckInvite = async (email: string) => {
-		try {
-			const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/auth/checkLoginInvite`, {
-				headers: {
-					"Content-Type": "application/json",
-				},
-				params: {
-					email: email,
-					token: tokenText,
-				},
-			});
-
-			const data = response.data;
-			if (data.status) {
-				if (data.result == "true") {
-					navigate(`/confirm?token=${tokenText}`);
-				} else {
-					navigate("/error");
-				}
-			}
-		} catch (error: any) {
-			if (error.response) {
-				console.error("Error:", error.response.data.message || error.response.data.error);
-				setErrorMessage(error.response.data.message || error.response.data.error);
-			} else if (error.request) {
-				setErrorMessage("Failed to connect to server.");
-			} else {
-				setErrorMessage("An unexpected error occurred: " + error.message);
-			}
-			setLoading(false);
-		}
-	};
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
@@ -81,9 +47,8 @@ function LoginPage() {
 
 				const data = response.data;
 				if (data.status) {
-					setToken(data.result.token);
 					if (invite == "yes") {
-						handleCheckInvite(emailInput.value);
+						navigate(`/confirm?token=${tokenText}`);
 					} else {
 						saveToken(data.result.token);
 						navigate("/home");

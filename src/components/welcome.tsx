@@ -10,7 +10,7 @@ const Welcome = () => {
 		const token = queryParams.get("token");
 		return <Navigate to={`/confirm?token=${token}`} />;
 	} else {
-		<Navigate to={`/login`} />;
+		return <Navigate to={`/login`} />;
 	}
 };
 

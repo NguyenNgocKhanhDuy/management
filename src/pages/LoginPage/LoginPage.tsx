@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./loginPage.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import ModalForgotPassword from "~/components/Modal/ForgotPassword/ModalForgotPassword";
 import { handleCheckEmail, handleCheckPassword } from "~/utils/validation";
 import Loading from "~/components/Loading/Loading";
@@ -12,6 +12,10 @@ function LoginPage() {
 	const [showModalForgotPass, setShowModalForgotPass] = useState(false);
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
+	const [searchParams] = useSearchParams();
+
+	const tokenText = searchParams.get("token");
+	const invite = searchParams.get("invite");
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
@@ -43,8 +47,12 @@ function LoginPage() {
 
 				const data = response.data;
 				if (data.status) {
-					saveToken(data.result.token);
-					navigate("/home");
+					if (invite != null) {
+						navigate(`/confirm?token=${tokenText}`);
+					} else {
+						saveToken(data.result.token);
+						navigate("/home");
+					}
 				}
 			} catch (error: any) {
 				if (error.response) {
